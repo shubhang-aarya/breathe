@@ -15,7 +15,7 @@ export async function GET(request:NextRequest){
   const diagnostics:{geo?:ReturnType<typeof describe>;directory?:{status:string;rows:number};feeds:ReturnType<typeof describe>[]}={feeds:[]};
   const raw=await get(`/feed/geo:${lat.toFixed(4)};${lon.toFixed(4)}/`);diagnostics.geo=describe(raw);
   let reading=parseReportedAQI(raw,lat,lon);
-  if(!reading||!reportedFresh(reading,Date.now())){
+  if(!reading||!reportedFresh(reading,Date.now())||reading.distanceKm>50){
    // Some coordinates return no usable geo feed. Discover bounded regional candidates,
    // then fetch full station feeds; map AQIs alone lack the required provenance/time.
    const dy=500/110,dx=Math.min(180,500/(110*Math.max(.01,Math.cos(lat*Math.PI/180))));
@@ -26,10 +26,10 @@ export async function GET(request:NextRequest){
     const candidates=rows.filter((row):row is Candidate=>{if(!row||typeof row!=='object')return false;const r=row as Record<string,unknown>;return typeof r.uid==='number'&&Number.isInteger(r.uid)&&r.uid>0&&typeof r.lat==='number'&&typeof r.lon==='number'&&validCoordinates(r.lat,r.lon)&&distanceKm(lat,lon,r.lat,r.lon)<=500;}).sort((a,b)=>distanceKm(lat,lon,a.lat,a.lon)-distanceKm(lat,lon,b.lat,b.lon)).filter((row,i,list)=>list.findIndex(other=>other.uid===row.uid)===i).slice(0,3);
     const results=await Promise.allSettled(candidates.map(async row=>{const feed=await get(`/feed/@${row.uid}/`);diagnostics.feeds.push(describe(feed));return parseReportedAQI(feed,lat,lon);}));
     const fresh=results.flatMap(r=>r.status==='fulfilled'&&r.value&&reportedFresh(r.value,Date.now())?[r.value]:[]).sort((a,b)=>a.distanceKm-b.distanceKm);
-    if(fresh.length)reading=fresh[0];
+    if(fresh.length&&(!reading||!reportedFresh(reading,Date.now())||fresh[0].distanceKm<reading.distanceKm))reading=fresh[0];
    }catch(error){if(!reading)throw error;/* Preserve an attributed last-known report, visibly stale. */}
   }
-  const result=reading?{status:'ok',reading}:{status:'unavailable',reason:'No usable station AQI with source attribution and observation time was returned within 500 km.'};
+  const result=reading?{status:'ok',reading}:{status:'unavailable',reason:'No usable attributed station AQI was returned by the coordinate or regional lookups.'};
   return NextResponse.json(p.get('diagnostics')==='1'?{...result,diagnostics}:result,{headers});
  }catch(error){return NextResponse.json({error:'The live station AQI provider could not be reached.'},{status:error instanceof ProviderError&&error.status===429?429:503,headers:{...headers,'Retry-After':String(error instanceof ProviderError?error.retryAfter??60:60)}})}
 }
