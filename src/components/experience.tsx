@@ -9,6 +9,7 @@ import { Planet } from "./planet";
 import { useExperience } from "@/store/experience";
 
 const credits = [
+  ["City search", "Open-Meteo geocoding · GeoNames location data", "https://open-meteo.com/en/docs/geocoding-api"],
   ["Open-Meteo", "CAMS modeled air quality, forecasts and weather", "https://open-meteo.com/en/docs/air-quality-api"],
   ["OpenAQ", "Station measurements · API key required", "https://docs.openaq.org/"],
   ["Earth imagery", "Blue Marble / Earth textures via three-globe example assets", "https://github.com/vasturiano/three-globe"],

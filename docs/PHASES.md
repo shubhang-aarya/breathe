@@ -71,3 +71,7 @@ Plan: after visual refinement and Phase 5 recovery, start deep links, layers and
 ### Welcome overflow correction — 2026-11-08
 
 User screenshot showed an oversized Earth overlapping the feature strip. Replaced the absolute-positioned welcome hero with explicit copy/Earth/meta/features grid areas, capped Earth container width, reduced heading sizes, and added a compact-height desktop treatment. Mobile keeps the globe in its own normal-flow row. Initialized globe canvas dimensions from its host before rendering and moved the decorative camera farther away. Lint, typecheck, 41 tests, production webpack build and diff whitespace checks passed. Visual confirmation in the user's browser remains pending.
+
+### City search correction — 2026-11-08
+
+User reported Phagwara not found because search only filtered the built-in catalog. Replaced it with a worldwide Open-Meteo geocoding proxy, typed validated results, 30-minute cache, input debounce/cancellation, local fallback, explicit loading/error/empty states and keyboard selection. Tests cover arbitrary off-catalog results, selecting coordinates with Enter, rejecting outdated results, and distinguishing provider failure from no match. Lint, typecheck, 47 tests, production build and git diff --check passed. Live provider response and browser confirmation remain pending; the search service could not be reached by the available retrieval surface.
