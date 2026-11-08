@@ -45,3 +45,11 @@ Plan: official API verification; DNS mirror discovery and server proxy; HTTPS st
 Implemented core radio. Initial validation passed lint, TypeScript, 24 tests and production build. Country/state geocoding fallback, media gesture unlock and live browser checks remain pending. This is a working source checkpoint, not a claim of validated live playback. Final logo fallback added and all checks rerun before commit.
 
 Final Phase 3 checkpoint checks: lint, typecheck, 24 tests and production build passed. Local preview attempt failed with listen EPERM on port 3000 in the restricted environment; browser playback QA could not run.
+
+## Phase 4 source integration — 2026-11-08
+
+Plan: check official OpenAQ v3 contracts, integrate nearest fixed-station concentrations with exact sensor units/timestamps, add cache and provider-cooldown handling, preserve model/measurement separation, test and commit.
+
+Implemented /api/station and station panel. Reads server-only OPENAQ_API_KEY; absent-key state is explicit and never fabricates measurements. Searches 25 km / 1,000 candidates, excludes mobile stations, joins latest records by sensor ID, and shows source/provider/observation and retrieval times. Raw concentrations are not converted from instantaneous values to AQI. Cached client results remain visible as STALE / Not live after refresh failure. Shared OpenAQ/Open-Meteo backoff honors provider cooldown headers. Tests cover native units, real zero, invalid/missing observations, nearest selection, stale age, retry headers, non-retryable authentication and 429 handling.
+
+Final checks passed: lint, typecheck, 32 tests across 10 files, production webpack build, git diff --check. Live OpenAQ verification is blocked by the missing server API key. Cross-instance quota budgeting, comprehensive license metadata and browser review remain outstanding. Phase 3 country/state fallback and Phase 2 animation QA also remain tracked; the build results do not certify those requirements.

@@ -32,7 +32,7 @@ Commit the generated package-lock.json once installation succeeds, then use npm 
 | 1 | Scaffold, tokens, glass primitives, splash | Implemented; execution checks blocked by registry DNS |
 | 2 | globe.gl, Open-Meteo, city search, pins | Partial source implementation; runtime checks blocked |
 | 3 | Radio Browser, playback, crossfade | Core implemented; live verification and region fallback pending |
-| 4 | OpenAQ, provenance, resilient proxy/cache | Planned |
+| 4 | OpenAQ, provenance, resilient proxy/cache | Implemented; API key and live verification pending |
 | 5 | History, comparison, health, forecast; first deploy | Planned |
 | 6 | Deep links, layers, terminator, cigarette equivalent, roulette | Planned |
 | 7 | Diwali comparison, breathing, sounds | Planned |
@@ -162,3 +162,15 @@ The native-element player includes play/pause, previous/next, station list, logo
 Pending Phase 3 acceptance: reverse-geocoded country/state fallback, a verified per-element gesture unlock, live mirror/stream checks and browser QA. Public Nominatim was not integrated: its application-wide 1 request/second policy requires a shared rate limiter across Vercel instances. BigDataCloud's free endpoint is client-only and is not appropriate for a server proxy. Geo-distance results remain clearly labelled as directory matches rather than inferred location identity. No unsupported claim that a selected station is in the pinned country is made.
 
 Validation: lint, typecheck, 24 tests (including secure station filtering and native-element crossfade/mute cleanup), and production build pass before the final logo addition; the final checks below are recorded in docs/PHASES.md. Network runtime testing and visual checks are separate from these build results.
+
+## Phase 4 station measurements
+
+Added /api/station, server-only OPENAQ_API_KEY authentication, a 25 km fixed-station search (up to 1,000 returned locations), coordinate-based nearest selection, latest sensor joins, native concentration units and per-sensor observation times. Station concentrations never replace or masquerade as the modeled US AQI. Negative/missing/nonfinite values, unknown sensors and invalid timestamps are excluded. If more than 1,000 stations exist inside the radius, the selected station is nearest among returned candidates; exhaustive pagination is not implemented.
+
+The panel preserves cached readings on client refresh failure, labels them STALE / Not live, flags readings older than two hours conservatively, and provides provider attribution. Normalized server data uses a 15-minute Next cache, preserving original retrieval times. A shared provider client now handles OpenAQ and Open-Meteo retries with bounded exponential backoff. It respects Retry-After and OpenAQ x-ratelimit-reset; cooldowns over four seconds return a nonblocking unavailable response rather than violating provider limits. No automatic station polling is used.
+
+### Enable measurements locally
+
+Register at https://explore.openaq.org/register. Add OPENAQ_API_KEY to .env.local (copy the template if needed), then restart the development server. Never paste the key into chat or put it in a NEXT_PUBLIC_ variable. The key is absent in the current local setup, so live OpenAQ validation remains pending. Add the same server-only variable in Vercel before deployment.
+
+Official OpenAQ v3 location/latest, geospatial, authentication and rate-limit documentation checked 8 November 2026. General quotas are 60/minute and 2,000/hour per API key; caching and bounded per-pin queries reduce usage. Shared cross-instance quota budgeting and complete provider-license metadata need verification before a public high-traffic deployment. Earlier phase checkpoints remain historical; the current source includes the station integration described here.
