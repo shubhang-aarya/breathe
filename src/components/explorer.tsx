@@ -1,0 +1,29 @@
+'use client';
+import dynamic from 'next/dynamic';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { MapPin, Navigation, Search, X } from 'lucide-react';
+import { cities, coordinateKey, category, pollutants, type Air, type Place } from '@/lib/air';
+import { airColor } from '@/lib/air-color';
+import { useExperience } from '@/store/experience';
+import { Glass, DataBadge } from './glass';
+const Globe=dynamic(()=>import('./live-globe'),{ssr:false,loading:()=> <div className="globe-loading" role="status">Preparing your window to the world…</div>});
+async function requestAir(url:string):Promise<Air[]>{const response=await fetch(url);if(!response.ok)throw new Error('Air quality is temporarily unavailable. Please try again shortly.');return response.json()}
+const labels:Record<string,string>={pm2_5:'PM₂.₅',pm10:'PM₁₀',nitrogen_dioxide:'NO₂',sulphur_dioxide:'SO₂',carbon_monoxide:'CO',ozone:'O₃'};
+function stale(air:Air|undefined,error:boolean){return error||!!(air?.observedAt&&Date.now()-Date.parse(air.observedAt)>2*3600000)}
+function Updated({air}:{air:Air}){return <small className="reading-source">{air.source} · Updated {air.observedAt?new Date(air.observedAt).toLocaleString():'unavailable'}<br/>Retrieved {new Date(air.fetchedAt).toLocaleString()}</small>}
+export function Explorer(){
+ const title=useRef<HTMLHeadingElement>(null);useEffect(()=>{title.current?.focus()},[]);
+ const lowPower=useExperience(s=>s.lowPower);const [search,setSearch]=useState('');const [pins,setPins]=useState<Place[]>([]);const [active,setActive]=useState<Place|null>(null);const [message,setMessage]=useState('');
+ const pin=useCallback((place:Place)=>{setPins(previous=>previous.some(p=>coordinateKey(p)===coordinateKey(place))?previous:previous.length<4?[...previous,place]:[...previous.slice(1),place]);setActive(place);setSearch('');},[]);
+ const global=useQuery({queryKey:['air','cities'],queryFn:()=>requestAir('/api/air?scope=cities'),retry:1});
+ const local=useQuery({queryKey:['air',active?coordinateKey(active):null],queryFn:()=>requestAir(`/api/air?lat=${active!.lat}&lon=${active!.lon}`),enabled:!!active,retry:1});
+ const air=local.data?.[0];const old=stale(air,local.isError);const matching=cities.filter(c=>c.name.toLowerCase().includes(search.toLowerCase()));
+ function locate(){if(!navigator.geolocation){setMessage('Location is unavailable in this browser. Use city search instead.');return}setMessage('Finding your location…');navigator.geolocation.getCurrentPosition(p=>{pin({lat:p.coords.latitude,lon:p.coords.longitude,name:'Your location'});setMessage('Location found. Coordinates stay in this session.')},()=>setMessage('Location access was unavailable. You can still explore using city search.'),{timeout:12000,maximumAge:300000})}
+ return <div className="air-explorer"><Globe data={global.data??[]} pins={pins} active={active} onPin={pin} lowPower={lowPower}/><div className="explorer-tools"><div className="eyebrow">THE AIR WE SHARE · US AQI</div><h1 ref={title} tabIndex={-1}>A world of perspective.</h1><label className="search-box glass"><Search size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Find a city" aria-label="Search available cities"/></label><button className="quiet-button" onClick={locate}><Navigation size={15}/> Use my location</button><Glass className="city-results" aria-label="Available cities"><p>{search?'Search results':'Start somewhere new'}</p>{matching.length?matching.map(place=><button key={place.name} onClick={()=>pin(place)}><MapPin size={13}/>{place.name}</button>):<p>No matching city. Try another name or tap the globe.</p>}</Glass></div>
+ <div className="pin-tabs" aria-label="Pinned locations">{pins.map(place=><div key={coordinateKey(place)}><button onClick={()=>setActive(place)} aria-pressed={active===place}>{place.name}</button><button aria-label={`Remove ${place.name}`} onClick={()=>{setPins(p=>p.filter(x=>x!==place));if(active===place)setActive(null)}}><X size={13}/></button></div>)}</div>
+ {active&&<Glass className="air-detail" aria-label={`Air quality for ${active.name}`}><div className="card-top"><MapPin size={16}/><span>YOUR PERSPECTIVE</span><button className="icon-button" aria-label="Close location details" onClick={()=>setActive(null)}><X size={16}/></button></div><h2>{active.name}</h2>{local.isPending?<div className="reading-skeleton" role="status">Loading air quality…</div>:<><DataBadge kind={old?'STALE':'MODELED'}/><div className="aqi-number" style={{color:airColor(air?.aqi??null)}}>{air?.aqi??'No data'}</div><p>{category(air?.aqi??null)} · US AQI</p>{old&&air&&<p>Not live · Cached modeled data</p>}{air?<Updated air={air}/>:<small>Source: Open-Meteo · CAMS · Last updated: unavailable</small>}<div className="empty-pollutants">{pollutants.map(key=><div key={key}><span>{labels[key]}</span><strong>{air?.pollutants[key]??'N/A'}{air?.pollutants[key]!=null&&<small> µg/m³</small>}</strong></div>)}</div><p className="fine-print">Model estimate for this area; not a station measurement.</p></>}{local.isError&&<p role="status">{local.error.message} <button onClick={()=>void local.refetch()}>Retry</button></p>}</Glass>}
+ <div className="globe-legend glass"><DataBadge kind={stale(global.data?.[0],global.isError)?'STALE':'MODELED'}/><span>Open-Meteo · CAMS · US AQI</span><div className="aqi-gradient"/><span>Good → Hazardous</span><small>Colour caps at red. Missing readings have no marker.</small>{global.data?.[0]&&<Updated air={global.data[0]}/>}<small>16 starter cities · Global grid expansion pending</small></div>
+ {(message||global.isError)&&<div className="status-toast glass" role="status">{message||'Global readings are unavailable. You can still choose a location.'}<button className="icon-button" aria-label="Dismiss status" onClick={()=>setMessage('')}><X size={14}/></button></div>}
+ </div>
+}

@@ -2,7 +2,7 @@
 
 A little perspective. A better breath.
 
-An original air quality intelligence platform for Lets Code Diwali Challenge 2026: Breathe Better. Individual entry. Work began on 8 November 2026. This repository is the **Phase 1 foundation**, not the completed hackathon submission.
+An original air quality intelligence platform for Lets Code Diwali Challenge 2026: Breathe Better. Individual entry. Work began on 8 November 2026. This repository contains the Phase 1 foundation and a **partial Phase 2 implementation**, not the completed hackathon submission.
 
 ## Run locally
 
@@ -30,7 +30,7 @@ Commit the generated package-lock.json once installation succeeds, then use npm 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 1 | Scaffold, tokens, glass primitives, splash | Implemented; execution checks blocked by registry DNS |
-| 2 | globe.gl, Open-Meteo, city search, pins | Planned |
+| 2 | globe.gl, Open-Meteo, city search, pins | Partial source implementation; runtime checks blocked |
 | 3 | Radio Browser, playback, crossfade | Planned |
 | 4 | OpenAQ, provenance, resilient proxy/cache | Planned |
 | 5 | History, comparison, health, forecast; first deploy | Planned |
@@ -52,7 +52,7 @@ Commit the generated package-lock.json once installation succeeds, then use npm 
 
 ## Data integrity and credits
 
-No AQI readings are hardcoded. No sources are connected in this release. Empty readings show “No data”; pollutants show “N/A”; source and update time are explicitly unavailable. The atmospheric illustration conveys no pollution data.
+No AQI readings are hardcoded. A server route for Open-Meteo is implemented but has not been runtime-verified. Missing readings show “No data”; unavailable pollutants show “N/A”. Source and observation timestamps accompany data when available. The atmospheric illustration conveys no pollution data.
 
 Planned sources (official contracts must be checked immediately before their integration):
 
@@ -102,3 +102,13 @@ Dependency installation failed in this execution environment: `getaddrinfo ENOTF
 The planet is a CSS illustration pending the actual interactive 3D globe. No search, map, live radio, history, forecast, comparison, health dashboard, or signature features are claimed complete. No screenshots are included until browser rendering can be verified. The light OS preference uses higher-contrast foregrounds while preserving the explicitly requested dark-space aesthetic. SVG refraction is deferred pending browser/performance checks; plain frosted glass is the fallback.
 
 See [demo outline](docs/DEMO_SCRIPT.md) and [phase record](docs/PHASES.md).
+
+## Phase 2 source checkpoint
+
+Implemented, not runtime-verified: dynamically loaded globe.gl; 16 starter cities; pin/drop rings; fly-to; city search; geolocation; four removable pins; six-pollutant detail; continuous OKLCH colour; cached server proxy; bounded 429/5xx retries; failure and missing-data states. Stale age is conservatively flagged after two hours, or when a client revalidation fails. API current data is MODELED, never MEASURED. Source and observation/retrieval timestamps are shown. Past and forecast hours are fetched but not yet displayed.
+
+Pending before Phase 2 acceptance: ~150 cities and global grid; batched heat surface and top/bottom 10; time scrubber and distinct forecast rendering; 24h sparkline; real 2D MapLibre fallback; pin spring and AQI-coloured rings; texture vendoring and day/night treatment. Current WebGL failure fallback is accessible city selection, not a 2D map.
+
+Official documentation checked 8 November 2026: Open-Meteo supports multi-coordinate requests, current us_aqi, pollutant concentrations, hourly data and recent past_days. globe.gl uses `new Globe(element)`, `onGlobeClick` and `pointOfView`. Current scope requests one past day and five forecast days; no unsupported historical years are enabled. Models include CAMS global / European products; retain attribution to Open-Meteo and Copernicus Atmosphere Monitoring Service / CAMS ENSEMBLE as applicable. Earth-night texture currently references the globe.gl / three-globe example asset hosted on unpkg; validate its upstream attribution/licensing and vendor it before submission.
+
+The full `src/lib/air.ts` starter list contains coordinates only, never AQI fixtures. No live provider responses or performance results have been fabricated.
