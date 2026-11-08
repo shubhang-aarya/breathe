@@ -173,3 +173,10 @@ Added support for the paired Marketplace KV_REST_API_URL / KV_REST_API_TOKEN nam
 Attempted desktop Lighthouse through Google's PageSpeed API; HTTP 429 reported its shared daily query quota exhausted. Installed the purpose-built Lighthouse 13.6.0 audit tool and attempted a desktop audit of the public production URL; ChromeLauncher could not start/connect to Chrome's debugging port. No Lighthouse result, screenshot or performance score was produced. Interactive browser tooling remains unavailable, so browser/mobile, media and screenshot acceptance are still open. No standalone UI-browser automation workaround was used.
 
 Validation passed: lint, TypeScript, 106 tests across 34 files, production webpack build and git diff --check. Existing production remains unchanged while provisioning approval and browser acceptance are pending.
+
+
+## Measured-first current AQI correction — 2026-11-08
+
+Investigated Riyadh: the large number came from CAMS, while the OpenAQ station last reported in 2021. Current cards now prioritize a measured particle NowCast using valid recent OpenAQ hourly PM2.5/PM10 observations and EPA 2024 breakpoints. Missing observations produce Live AQI unavailable. Modeled values remain available in a separate disclosure and the globe remains a modeled overview. Raw concentrations retain individual observation times and stale labels. Fresh stations are preferred to closer inactive stations. Breathing also requires a fresh Good measured index.
+
+The particle calculation requires two of the latest three completed hours, preserves missing hours, checks units/coverage/flags, and displays >500 rather than extrapolating beyond published breakpoints. This is explicitly a particle-only index, not an official city composite. No AQI.in values were copied or invented.
