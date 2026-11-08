@@ -1,0 +1,10 @@
+import {afterEach,expect,it,vi} from 'vitest';
+vi.mock('server-only',()=>({}));
+const {providerFetch}=vi.hoisted(()=>({providerFetch:vi.fn()}));
+vi.mock('@/lib/server/retry',()=>({providerFetch,ProviderError:class extends Error{status=429;retryAfter=60;}}));
+import {GET} from './route';
+import {NextRequest} from 'next/server';
+afterEach(()=>{vi.unstubAllEnvs();vi.clearAllMocks();});
+it('validates coordinates before contacting the provider',async()=>{const r=await GET(new NextRequest('https://example.org/api/live-aqi?lat=&lon=77'));expect(r.status).toBe(400);expect(providerFetch).not.toHaveBeenCalled();});
+it('reports missing configuration without exposing or caching credentials',async()=>{vi.stubEnv('WAQI_API_TOKEN','');const r=await GET(new NextRequest('https://example.org/api/live-aqi?lat=28.61&lon=77.21'));expect(await r.json()).toEqual({status:'unconfigured'});expect(r.headers.get('Cache-Control')).toContain('no-store');expect(providerFetch).not.toHaveBeenCalled();});
+it('keeps the token server-side and handles a provider rejection without leaking it',async()=>{vi.stubEnv('WAQI_API_TOKEN','test-only-token');providerFetch.mockResolvedValue({json:async()=>({status:'error',data:'Invalid key'})});const r=await GET(new NextRequest('https://example.org/api/live-aqi?lat=28.61&lon=77.21'));const body=await r.text();expect(body).not.toContain('test-only-token');expect(JSON.parse(body).status).toBe('unavailable');expect(providerFetch.mock.calls[0][0]).toContain('https://api.waqi.info/feed/geo:28.6100;77.2100/');expect(r.headers.get('Vercel-CDN-Cache-Control')).toBe('no-store');});
