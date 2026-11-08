@@ -15,6 +15,8 @@ The existing `.env.local` stays local and is not uploaded with source. In Vercel
 | `UPSTASH_REDIS_REST_URL` | Shared quota store HTTPS endpoint |
 | `UPSTASH_REDIS_REST_TOKEN` | Shared quota store write-capable REST token |
 
+A Vercel Marketplace connection can inject `KV_REST_API_URL` and `KV_REST_API_TOKEN`; the server recognizes that pair automatically when no custom `UPSTASH_*` pair is configured. A partially configured custom pair is rejected rather than mixed with another store’s token.
+
 Use a persistent Upstash Redis database from your account or Vercel Marketplace. Do not use a temporary expiring database for the final submission. Values go only into server environment settings; never paste keys into chat, source, URLs, screenshots or shell arguments.
 
 The shared limiter reserves minute/hour capacity atomically for the assistant and OpenAQ requests. It also preserves OpenAQ cooldowns across instances. Without Redis, development uses a bounded in-process fallback. On Vercel, paid AI explanations require shared limiting and otherwise return the sourced summary. If configured Redis fails, requests fail closed rather than bypassing it. OpenAQ budgets are deliberately conservative (30/minute and 1,000/hour for this application); use a dedicated key, because activity in other applications sharing that key is outside this budget.

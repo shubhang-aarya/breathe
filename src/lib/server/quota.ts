@@ -26,7 +26,9 @@ return {1, 0}`;
 const cooldownScript = `local ttl=redis.call('TTL',KEYS[1]); if ttl < tonumber(ARGV[1]) then redis.call('SET',KEYS[1],'1','EX',ARGV[1]) end; return 1`;
 const local = new Map<string, { start: number; count: number }>(), cooldowns = new Map<Name, number>();
 function config() {
-  const url = process.env.UPSTASH_REDIS_REST_URL, token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const custom = !!(process.env.UPSTASH_REDIS_REST_URL || process.env.UPSTASH_REDIS_REST_TOKEN);
+  const url = custom ? process.env.UPSTASH_REDIS_REST_URL : process.env.KV_REST_API_URL;
+  const token = custom ? process.env.UPSTASH_REDIS_REST_TOKEN : process.env.KV_REST_API_TOKEN;
   if (!url && !token) return null;
   if (!url || !token) throw new QuotaUnavailable();
   try { const parsed = new URL(url); if (parsed.protocol !== 'https:' || parsed.username || parsed.password) throw new Error(); } catch { throw new QuotaUnavailable(); }

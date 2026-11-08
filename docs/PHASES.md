@@ -163,3 +163,13 @@ Validation passed: ESLint, TypeScript, 105 tests across 34 files, production web
 User linked the project with Vercel account shubhang-aarya / team shubhang-aarya09. CLI access became available. Confirmed initial READY deployment, encrypted the existing OpenAQ/OpenAI keys in Production and Preview, then redeployed production successfully. Public alias: https://breathe-seven-alpha.vercel.app. Updated deployment: dpl_FxUga4BTVyGtW6Zy2KgbkaGeuLBm. Source application commit: 769a161.
 
 Live HTTP checks confirmed real modeled AQI, a nearby OpenAQ station with six supported pollutants, Phagwara search, six HTTPS radio-directory stations, manifest/icons and service-worker cache headers. Assistant fallback without shared Redis was verified. Browser rendering/playback/offline/permissions/Lighthouse and screenshot/demo evidence remain pending. See DEPLOYMENT.md for scope and limits of the deployed checks.
+
+## Browser/Lighthouse and Marketplace Redis acceptance attempt — 2026-11-08
+
+Verified the live Marketplace catalog: Upstash for Redis is available as upstash/upstash-kv with a Free plan. The project has no connected Redis resource. Prepared a concrete resource configuration: breathe-quota, Free, iad1, automatic plan upgrades disabled, production pack disabled, connected only to Production and Preview, with no automatic local environment pull. Automatic approval review rejected provisioning because explicit permission for persistent third-party resource creation/production configuration is required. No resource was created; a subsequent read-only resource listing remained empty. Do not retry provisioning before approval.
+
+Added support for the paired Marketplace KV_REST_API_URL / KV_REST_API_TOKEN names alongside custom UPSTASH_* credentials. Partial custom pairs remain rejected rather than mixed with another store's credentials. This source change is ready for the Redis setup but has not been deployed yet.
+
+Attempted desktop Lighthouse through Google's PageSpeed API; HTTP 429 reported its shared daily query quota exhausted. Installed the purpose-built Lighthouse 13.6.0 audit tool and attempted a desktop audit of the public production URL; ChromeLauncher could not start/connect to Chrome's debugging port. No Lighthouse result, screenshot or performance score was produced. Interactive browser tooling remains unavailable, so browser/mobile, media and screenshot acceptance are still open. No standalone UI-browser automation workaround was used.
+
+Validation passed: lint, TypeScript, 106 tests across 34 files, production webpack build and git diff --check. Existing production remains unchanged while provisioning approval and browser acceptance are pending.

@@ -20,8 +20,9 @@ check('Dependencies', existsSync('node_modules/next/package.json') ? 'pass' : 'f
 check('Production build', existsSync('.next/BUILD_ID') ? 'pass' : 'blocked', existsSync('.next/BUILD_ID') ? 'A build exists; run npm run check to verify current source' : 'Run npm run check');
 check('Vercel project', existsSync('.vercel/project.json') ? 'pass' : 'blocked', existsSync('.vercel/project.json') ? 'Project link exists' : 'Run npx vercel login, then npx vercel link');
 for (const key of ['OPENAQ_API_KEY', 'OPENAI_API_KEY', 'BIGDATACLOUD_API_KEY']) check(key, process.env[key] ? 'pass' : 'optional', process.env[key] ? 'Configured locally (value hidden)' : 'Not configured locally');
-const shared = !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
-check('Shared request limiting', shared ? 'pass' : 'blocked', shared ? 'Credentials configured; deployed reservation must still be tested' : 'Set server UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for distributed quotas');
+const customRedis = !!(process.env.UPSTASH_REDIS_REST_URL || process.env.UPSTASH_REDIS_REST_TOKEN);
+const shared = customRedis ? !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN : !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
+check('Shared request limiting', shared ? 'pass' : 'blocked', shared ? 'Credentials configured; deployed reservation must still be tested' : 'Configure Upstash server credentials or connect Marketplace KV_REST_API_URL/KV_REST_API_TOKEN for distributed quotas');
 for (const hostname of ['registry.npmjs.org', 'air-quality-api.open-meteo.com', 'api.vercel.com']) {
   try { const response = await fetch(`https://${hostname}`, { method: 'HEAD', signal: AbortSignal.timeout(5000) }); check(`Network ${hostname}`, 'pass', `Reachable, HTTP ${response.status} (not an authenticated provider test)`); }
   catch (error) { check(`Network ${hostname}`, 'blocked', error.cause?.code || error.name); }

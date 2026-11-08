@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 vi.mock('server-only',()=>({}));
 import { takeBudget, recordProviderCooldown } from './quota';
-beforeEach(()=>{vi.stubEnv('UPSTASH_REDIS_REST_URL','');vi.stubEnv('UPSTASH_REDIS_REST_TOKEN','')});
+beforeEach(()=>{vi.stubEnv('UPSTASH_REDIS_REST_URL','');vi.stubEnv('UPSTASH_REDIS_REST_TOKEN','');vi.stubEnv('KV_REST_API_URL','');vi.stubEnv('KV_REST_API_TOKEN','')});
 afterEach(()=>vi.unstubAllEnvs());
 it('coordinates shared minute/hour reservations atomically and respects shared cooldowns',async()=>{
  vi.stubEnv('UPSTASH_REDIS_REST_URL','https://redis.example');vi.stubEnv('UPSTASH_REDIS_REST_TOKEN','test-only');
@@ -21,4 +21,11 @@ it('retains the longest provider cooldown and allows requests after expiry local
  const now=10_000_000;await recordProviderCooldown('openaq',120,fetch,now);await recordProviderCooldown('openaq',10,fetch,now);
  expect((await takeBudget('openaq',fetch,now+11000)).retryAfter).toBe(109);
  expect((await takeBudget('openaq',fetch,now+121000)).allowed).toBe(true);
+});
+
+it('accepts the pair of Vercel Marketplace KV REST variables without mixing configurations',async()=>{
+ vi.stubEnv('KV_REST_API_URL','https://marketplace-redis.example');vi.stubEnv('KV_REST_API_TOKEN','marketplace-test');
+ const fetcher=vi.fn().mockResolvedValue(new Response(JSON.stringify({result:[1,0]})));
+ expect((await takeBudget('assistant',fetcher)).shared).toBe(true);expect(fetcher.mock.calls[0][0]).toBe('https://marketplace-redis.example');
+ vi.stubEnv('UPSTASH_REDIS_REST_URL','https://custom-redis.example');await expect(takeBudget('assistant',fetcher)).rejects.toThrow('Request limiting');expect(fetcher).toHaveBeenCalledTimes(1);
 });
