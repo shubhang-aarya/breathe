@@ -4,6 +4,7 @@ import {cleanup,render,screen} from '@testing-library/react';
 import {LiveReading} from './live-reading';
 const {useStation}=vi.hoisted(()=>({useStation:vi.fn()}));
 vi.mock('@/lib/use-station',()=>({useStation}));vi.mock('@/lib/use-clock',()=>({useClock:()=>Date.parse('2026-11-08T14:20:00Z')}));vi.mock('@/lib/use-offline',()=>({useOffline:()=>false}));vi.mock('./station-panel',()=>({StationPanel:()=>null}));
+vi.mock('./reported-aqi',()=>({ReportedAQI:({fallback}:{fallback:React.ReactNode})=>fallback}));
 afterEach(()=>cleanup());
 const place={name:'Riyadh',lat:24.714,lon:46.675};
 it('does not substitute a model estimate for missing live station AQI',()=>{
