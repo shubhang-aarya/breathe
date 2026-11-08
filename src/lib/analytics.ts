@@ -1,0 +1,7 @@
+import type { Air } from './air';
+export type Hour=Air['hours'][number];
+export function mean(values:(number|null|undefined)[]){const available=values.filter((x):x is number=>typeof x==='number'&&Number.isFinite(x));return available.length?available.reduce((a,b)=>a+b,0)/available.length:null}
+export function percentChange(before:number|null,after:number|null){return before===null||after===null||before===0||!Number.isFinite(before)||!Number.isFinite(after)?null:100*(after-before)/before}
+export function spikes(hours:Hour[],window=24){return hours.map((h,index)=>{const previous=hours.slice(Math.max(0,index-window),index).map(x=>x.aqi).filter((x):x is number=>x!==null&&Number.isFinite(x));if(previous.length<6||h.aqi===null)return {...h,spike:false};const avg=mean(previous)!;const sd=Math.sqrt(previous.reduce((sum,x)=>sum+(x-avg)**2,0)/previous.length);return {...h,spike:h.aqi>avg+2*sd}})}
+export function daily(hours:Hour[]){const buckets=new Map<string,Hour[]>();for(const h of hours){const day=h.time.slice(0,10);buckets.set(day,[...(buckets.get(day)??[]),h])}return [...buckets].sort(([a],[b])=>a.localeCompare(b)).map(([date,rows])=>({date,aqi:mean(rows.map(h=>h.aqi)),pm25:mean(rows.map(h=>h.pm25)),pm10:mean(rows.map(h=>h.pm10)),hours:rows.filter(h=>h.aqi!==null).length}))}
+export function range(hours:Hour[],start:string,end:string){if(!/^\d{4}-\d{2}-\d{2}$/.test(start)||!/^\d{4}-\d{2}-\d{2}$/.test(end)||start>end)return [];return hours.filter(h=>h.time.slice(0,10)>=start&&h.time.slice(0,10)<=end)}
