@@ -177,8 +177,14 @@ Official OpenAQ v3 location/latest, geospatial, authentication and rate-limit do
 
 ## Visual refinement and Phase 5
 
-Both entry and explorer now use a realistic, locally bundled Blue Marble globe and elevation bump map. The entry falls back to a texture-based sphere if WebGL fails. The glass layout uses responsive grid/flex flow, smooth native scrolling, quieter borders and shadows, and reduced-motion-aware transitions. Earth assets are copied from three-globe 2.45.x example imagery (installed package); its MIT license is bundled at public/textures/THREE-GLOBE-LICENSE.txt and the upstream project is credited in-app. The welcome Earth is decorative and conveys no air quality readings.
+Both entry and explorer now use a realistic, locally bundled Blue Marble globe and elevation bump map. The entry falls back to a texture-based sphere if WebGL fails. The glass layout uses responsive grid/flex flow, smooth native scrolling, quieter borders and shadows, and reduced-motion-aware transitions. Earth assets are copied from the installed three-globe package example imagery; its MIT license is bundled at public/textures/THREE-GLOBE-LICENSE.txt and the upstream project is credited in-app. The welcome Earth is decorative and conveys no air quality readings.
 
 Phase 5 adds recent seven-day modeled history, date-to-date percentage comparisons, daily means, PM2.5/PM10 comparison, rolling 2σ spike flags, up to four pinned-location trend overlays and pollutant differences, health guidance, and dashed hourly/daily forecast charts. Daily summaries explicitly mean available hourly model AQI, not regulatory daily AQI. Coverage counts disclose partial UTC days. History range is intentionally limited to seven days despite the documented larger past_days limit. No archive-year availability is implied.
 
 Insights include keyboard dialog containment and focus restoration. Modeled comparison rankings are labelled as such; measured historical comparisons are not implemented. Deployment is still pending: no Vercel CLI/account is available in the restricted environment. No public URL or screenshots are claimed.
+
+## Phase 6 started
+
+Added validated coordinate/time deep links with copy-link control, back/forward restoration after Enter, AQI / hotspot / pin layer toggles, and real-data Good-air roulette avoiding the last five choices. ISO times are rounded to the nearest hourly frame; relative offsets are constrained to the currently available -24h / +96h scrubber range. Invalid query values fall back safely. The splash still gates entry and audio. Clipboard failure is nonblocking.
+
+Validation: lint, typecheck, all 41 tests and the production webpack build pass. Phase 6 remains in progress: solar day/night terminator, OG preview generation, and wind controls are not implemented. Public deployment and visual browser QA remain pending; there is no linked Vercel project or installed Vercel CLI in this workspace. The UI refinements can be reviewed by refreshing the user's running dev server.

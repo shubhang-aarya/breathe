@@ -63,3 +63,7 @@ Checks passed: lint, typecheck, 32 tests and production webpack build. Live visu
 ## Phase 5 recovered and validated — 2026-11-08
 
 Recovered interrupted history/compare/forecast/health source, added keyboard dialog handling and analytics tests. Lint, typecheck, unit tests and production build were rerun; results recorded by the commit checkpoint. Vercel deployment is blocked by absent CLI/account and restricted network. No deployment claim is made. Remaining measured-history comparison, screenshot/browser QA and earlier radio country/state fallback are documented limitations. User requested proceeding to the next phase after UI refinement; continue Phase 6 source without implying the deployment milestone passed.
+
+## Phase 6 first checkpoint — 2026-11-08
+
+Plan: after visual refinement and Phase 5 recovery, start deep links, layers and clean-air roulette. Implemented coordinate/relative-hour/ISO parsing, share-link generation, layer toggles and fresh Good-air random selection with five-pick memory. Lint, typecheck, 41 tests and production build passed. Vercel deployment remains blocked by absent project linkage/CLI; user requested proceeding to the next phase. Solar terminator, Open Graph image and remaining signature work are still pending. This is a checkpoint, not Phase 6 completion.
