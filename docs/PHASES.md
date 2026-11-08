@@ -141,3 +141,9 @@ Final automated verification for this continuation: ESLint and TypeScript passed
 Added Home in the main header and made the brand return to the welcome screen with heading focus. Added Radio in the header (also available before entering) and a common Back to globe / Radio navigation strip in Diwali, insights, toolkit and breathing panels. Panel exits remain visible while scrolling. Radio requests close overlays, then scroll and focus the player after modal focus restoration; reduced-motion preferences use immediate scrolling. The radio destination is a labeled, focusable region.
 
 Verification: lint, TypeScript, 95 tests across 31 files, production webpack build and git diff --check passed. New tests cover welcome return/focus, entry via the Radio shortcut, explicit panel back behavior, and radio focus/scroll after closing a panel. Browser visual acceptance remains pending in this restricted environment.
+
+## Panel/header collision fix — 2026-11-08
+
+User screenshot exposed that a modal inside the isolated/transformed explorer could remain below the application header regardless of its local z-index. Moved Diwali, insights and breathing overlays into a shared body portal. The backdrop covers application navigation and locks background scrolling; Diwali/insights use a bounded flex panel with a separate header and independently scrolling body. Back/Radio controls wrap on mobile and no longer share the application's header area. Low-power and reduced-motion behavior remain available.
+
+Verification passed: lint, TypeScript, 97 tests across 32 files, production webpack build and git diff --check. New regressions assert portal placement outside a transformed ancestor, background-scroll restoration and backdrop-only dismissal. These structural tests do not replace the still-pending visual browser check.
