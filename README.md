@@ -128,3 +128,11 @@ Added 84 fixed global sampling coordinates in six bounded batches (14 coordinate
 Added lazy Recharts 24-hour history, no bridging of null gaps, and a keyboard-readable hourly list. The historical chart is labeled HISTORICAL / CAMS modeled data with its end time. Stale detail readings now retain their FORECAST / HISTORICAL / MODELED badge in addition to STALE. Normalized server payloads use a persistent 15-minute Next cache so retrieval timestamps survive revalidation.
 
 Ten dependency-free sampling / time-series assertions passed in Node. Corresponding Vitest coverage was added. Full lint, typecheck, tests, build and browser verification remain blocked by missing installed dependencies. This remains partial Phase 2 source, not a tested release.
+
+### Phase 2 final source checkpoint
+
+The catalog now contains 150 distinct city coordinates plus 84 global grid samples. City requests are split into bounded 14-coordinate batches. The available-city ranking shows the lowest and highest ten loaded city AQIs at the selected frame; it explicitly does not claim a worldwide ranking. Hotspot rings use available sampled values. Pin markers and spring detail-card entry are implemented. Local pinned data participates in the globe coloring.
+
+The location card includes sourced, general AirNow guidance and the Berkeley Earth approximation only when all 24 unique hourly modeled PM2.5 values exist. Eight additional direct Node assertions passed for catalog size, uniqueness, bounds, rankings, missing data and the complete-day requirement. Full Vitest equivalents are included.
+
+**Acceptance status:** source implementation has advanced, but Phase 2 is not verified complete. npm continues to fail with ENOTFOUND. Required lint, TypeScript, Vitest, production build and browser checks cannot run. Motion quality, pin drop/count-up polish, texture readiness, performance, responsiveness, API response contracts and deployment must be verified before Phase 2 acceptance. No real API response, deployed build, screenshot or Lighthouse result is claimed. Radio remains Phase 3.

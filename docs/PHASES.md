@@ -25,3 +25,7 @@ Added MapLibre 2D view and globe failure switching, exact-hour AQI timeline and 
 ### Global coverage continuation — 2026-11-08
 
 Implemented 84-point coarse global grid in six batches, sampled hex-bin colors, lazy 24-hour chart with textual values, and preserved server retrieval timestamps by caching normalized responses. Added sampling/trend tests and preserved base data type alongside STALE. Ten direct Node assertions passed; git diff --check passed. Lint, typecheck, Vitest and build were attempted but executables are unavailable. Remaining Phase 2 work includes city coverage expansion, ranking/hotspots, pin polish, recommendations and all browser/runtime checks. Do not describe this phase as completed.
+
+### Phase 2 final source checkpoint — 2026-11-08
+
+Expanded catalog to 150 cities and bounded city requests. Added loaded-city best/worst lists, model-data hotspot rings, marker pins, spring card entry, sourced health recommendation and complete-day cigarette approximation. Eight direct Node assertions passed. Required lint/typecheck/Vitest/build all attempted and blocked by dependency installation ENOTFOUND. git diff --check passed. Acceptance remains blocked; do not mark the phase verified or proceed to deployment on these results.

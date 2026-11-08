@@ -2,11 +2,13 @@
 import { useEffect, useRef, useState } from 'react';
 import type { GlobeInstance } from 'globe.gl';
 import { airColor } from '@/lib/air-color';
+import { rankLocations } from '@/lib/perspective';
 import type { Air, Place } from '@/lib/air';
 export default function LiveGlobe({data,pins,active,onPin,lowPower,onFailure}:{data:Air[];pins:Place[];active:Place|null;onPin:(p:Place)=>void;lowPower:boolean;onFailure:()=>void}){
  const failureHandler=useRef(onFailure);useEffect(()=>{failureHandler.current=onFailure},[onFailure]);
  const host=useRef<HTMLDivElement>(null);const globe=useRef<GlobeInstance|null>(null);const pinHandler=useRef(onPin);const latest=useRef({data,pins,active});const [failed,setFailed]=useState(false);
- useEffect(()=>{pinHandler.current=onPin;latest.current={data,pins,active};if(globe.current){globe.current.pointsData(data.filter(d=>d.aqi!==null)).hexBinPointsData(data.filter(d=>d.aqi!==null)).ringsData(pins);if(active)globe.current.pointOfView({lat:active.lat,lng:active.lon,altitude:1.7},matchMedia('(prefers-reduced-motion: reduce)').matches?0:1400)}},[data,pins,active,onPin]);
+ function rings(data:Air[],pins:Place[]){return [...pins.map(p=>({...p,color:airColor(data.find(d=>Math.abs(d.place.lat-p.lat)<.01&&Math.abs(d.place.lon-p.lon)<.01)?.aqi??null)})),...rankLocations(data).worst.map(d=>({...d.place,color:airColor(d.aqi)}))]}
+ useEffect(()=>{pinHandler.current=onPin;latest.current={data,pins,active};if(globe.current){globe.current.pointsData(data.filter(d=>d.aqi!==null)).hexBinPointsData(data.filter(d=>d.aqi!==null)).ringsData(rings(data,pins)).labelsData(pins);if(active)globe.current.pointOfView({lat:active.lat,lng:active.lon,altitude:1.7},matchMedia('(prefers-reduced-motion: reduce)').matches?0:1400)}},[data,pins,active,onPin]);
  useEffect(()=>{
   if(!host.current)return;let disposed=false;let observer:ResizeObserver|undefined;let timer:ReturnType<typeof setTimeout>|undefined;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,7 +19,7 @@ export default function LiveGlobe({data,pins,active,onPin,lowPower,onFailure}:{d
    controls.addEventListener('start',()=>{controls.autoRotate=false;if(timer)clearTimeout(timer)});controls.addEventListener('end',()=>{timer=setTimeout(()=>{if(!disposed)controls.autoRotate=!reduced&&!lowPower},6000)});
    g.renderer().domElement.addEventListener('webglcontextlost',()=>{setFailed(true);failureHandler.current()},{once:true});
    observer=new ResizeObserver(()=>{if(host.current)g.width(host.current.clientWidth).height(host.current.clientHeight)});observer.observe(host.current);
-   g.pointsData(latest.current.data.filter(d=>d.aqi!==null)).hexBinPointsData(latest.current.data.filter(d=>d.aqi!==null)).ringsData(latest.current.pins).ringLat(d=>(d as Place).lat).ringLng(d=>(d as Place).lon).ringColor(()=>'#d2e4c6').ringMaxRadius(3).ringPropagationSpeed(reduced||lowPower?0:1).ringRepeatPeriod(1500);
+   g.pointsData(latest.current.data.filter(d=>d.aqi!==null)).hexBinPointsData(latest.current.data.filter(d=>d.aqi!==null)).ringsData(rings(latest.current.data,latest.current.pins)).labelsData(latest.current.pins).labelLat(d=>(d as Place).lat).labelLng(d=>(d as Place).lon).labelText(()=>'●').labelSize(1.3).labelColor(()=>'#f0f3ef').labelDotRadius(.2).labelAltitude(.025).ringLat(d=>(d as Place).lat).ringLng(d=>(d as Place).lon).ringColor(d=>(d as Place&{color:string}).color).ringMaxRadius(3).ringPropagationSpeed(reduced||lowPower?0:1).ringRepeatPeriod(1500);
    const p=latest.current.active;g.pointOfView({lat:p?.lat??20,lng:p?.lon??77,altitude:p?1.7:2.2});
   }).catch(()=>{if(!disposed){setFailed(true);failureHandler.current()}});
   return()=>{disposed=true;observer?.disconnect();if(timer)clearTimeout(timer);globe.current?._destructor();globe.current=null};
