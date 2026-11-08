@@ -75,3 +75,9 @@ User screenshot showed an oversized Earth overlapping the feature strip. Replace
 ### City search correction — 2026-11-08
 
 User reported Phagwara not found because search only filtered the built-in catalog. Replaced it with a worldwide Open-Meteo geocoding proxy, typed validated results, 30-minute cache, input debounce/cancellation, local fallback, explicit loading/error/empty states and keyboard selection. Tests cover arbitrary off-catalog results, selecting coordinates with Enter, rejecting outdated results, and distinguishing provider failure from no match. Lint, typecheck, 47 tests, production build and git diff --check passed. Live provider response and browser confirmation remain pending; the search service could not be reached by the available retrieval surface.
+
+### Phase 6 solar and Open Graph checkpoint — 2026-11-08
+
+Implemented selected-time solar day/night shader, layer/deep-link state, NOAA approximate subsolar calculation and tests, and a dynamic next/og image route advertised by page metadata. OG readings come from the server-side model client and carry source/type/times and stale labels. Missing data remains No data. Resource cleanup guards asynchronous texture loading after unmount. Shader adapter is isolated in JavaScript because third-party type definitions are unavailable offline; all domain functions and routes are TypeScript.
+
+Final checks passed: lint, typecheck, 51 tests and production webpack build. Browser shader visual QA, social crawler verification and Vercel deployment remain pending. This is a source checkpoint, not a claim that the public deployment milestone passed. The next build phase is Diwali Effect, guided breathing and optional UI sounds.

@@ -31,7 +31,8 @@
     "culori": "^4.0.0",
     "server-only": "^0.0.1",
     "maplibre-gl": "^6.17.0",
-    "recharts": "^3.0.0"
+    "recharts": "^3.0.0",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "typescript": "^5.9.0",
