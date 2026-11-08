@@ -2,7 +2,7 @@
 
 Explore the air we share. BREATHE combines a realistic interactive Earth, sourced air quality, local radio and tools for understanding pollution over time.
 
-Built for **Lets Code Diwali Challenge 2026: Breathe Better**, theme: Technology for Cleaner Air. Individual entry. This repository is a release candidate; a public deployment and browser acceptance checks are still pending.
+Built for **Lets Code Diwali Challenge 2026: Breathe Better**, theme: Technology for Cleaner Air. Individual entry. **Production:** https://breathe-seven-alpha.vercel.app. The deployment is live; browser acceptance and measured performance remain pending.
 
 ## Run locally
 
@@ -124,7 +124,7 @@ Use [docs/RELEASE_RUNBOOK.md](docs/RELEASE_RUNBOOK.md) for the complete preview 
 4. Review the preview deployment with [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md), then promote it or run `npx vercel --prod`.
 5. Check live provider responses and HTTPS radio playback on the deployed origin. Confirm source times, stale behavior, mobile layout and service-worker updates before submission.
 
-No public deployment URL is recorded yet. This environment has no linked Vercel project or available Vercel CLI, and its npm DNS access is blocked. A successful local build is not a deployment. GitHub Actions checks are included in `.github/workflows/ci.yml` and will run when this repository is pushed.
+Production is live at **https://breathe-seven-alpha.vercel.app** under `shubhang-aarya09/breathe`. OpenAQ and OpenAI credentials are encrypted in Production and Preview. HTTP checks verified modeled AQI, six nearby station pollutants, city search, HTTPS radio directory results, manifest and service-worker headers. Shared Redis is not configured, so Vercel AI explanations use the sourced summary fallback. See [deployment evidence](docs/DEPLOYMENT.md). A live deployment does not certify browser visuals, playback, offline reload or Lighthouse performance. GitHub Actions checks are included in `.github/workflows/ci.yml` and will run when this repository is pushed.
 
 ## Known limitations
 

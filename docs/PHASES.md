@@ -157,3 +157,9 @@ Implemented shared atomic minute/hour reservations for OpenAQ and assistant requ
 Added `release:doctor` to write sanitized prerequisite/API response evidence for a supplied running origin, and `release:lighthouse` to validate an actual desktop report against its expected origin and the 85 target. Added the end-to-end release runbook and environment documentation. Diagnostic output explicitly reports INCOMPLETE and leaves browser, Lighthouse and deployment acceptance unverified. No screenshot or score was fabricated, and no Vercel deployment occurred.
 
 Validation passed: ESLint, TypeScript, 105 tests across 34 files, production webpack build and git diff --check. Additional tests cover shared-store response/failure contracts, cooldown preservation, incomplete configuration, Vercel AI fallback without shared limiting and rejection of invalid/mobile/under-target Lighthouse report fixtures. Synthetic test reports are not measurements of BREATHE.
+
+## Vercel production deployment — 2026-11-08
+
+User linked the project with Vercel account shubhang-aarya / team shubhang-aarya09. CLI access became available. Confirmed initial READY deployment, encrypted the existing OpenAQ/OpenAI keys in Production and Preview, then redeployed production successfully. Public alias: https://breathe-seven-alpha.vercel.app. Updated deployment: dpl_FxUga4BTVyGtW6Zy2KgbkaGeuLBm. Source application commit: 769a161.
+
+Live HTTP checks confirmed real modeled AQI, a nearby OpenAQ station with six supported pollutants, Phagwara search, six HTTPS radio-directory stations, manifest/icons and service-worker cache headers. Assistant fallback without shared Redis was verified. Browser rendering/playback/offline/permissions/Lighthouse and screenshot/demo evidence remain pending. See DEPLOYMENT.md for scope and limits of the deployed checks.
