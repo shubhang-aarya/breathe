@@ -10,7 +10,7 @@ export function parseReportedAQI(raw:unknown,lat:number,lon:number,now=Date.now(
  if(typeof d.aqi!=='number'||!Number.isFinite(d.aqi)||d.aqi<0||d.aqi>1000||typeof city?.name!=='string'||!city.name.trim()||!Array.isArray(city.geo)||city.geo.length!==2)return null;
  const coords=city.geo.map(v=>typeof v==='number'?v:typeof v==='string'&&v.trim()?Number(v):NaN);
  if(!coords.every(Number.isFinite)||Math.abs(coords[0])>90||Math.abs(coords[1])>180)return null;
- const distance=distanceKm(lat,lon,coords[0],coords[1]);if(distance>500)return null;
+ const distance=distanceKm(lat,lon,coords[0],coords[1]);
  const explicit=typeof time?.iso==='string'&&/(Z|[+-]\d{2}:\d{2})$/.test(time.iso)?time.iso:typeof time?.s==='string'&&typeof time.tz==='string'&&/^[+-](?:0\d|1[0-4]):[0-5]\d$/.test(time.tz)?time.s.replace(' ','T')+time.tz:null;
  if(!explicit||!Number.isFinite(Date.parse(explicit)))return null;
  const url=safeUrl(city.url);if(!url)return null;
