@@ -107,8 +107,16 @@ See [demo outline](docs/DEMO_SCRIPT.md) and [phase record](docs/PHASES.md).
 
 Implemented, not runtime-verified: dynamically loaded globe.gl; 16 starter cities; pin/drop rings; fly-to; city search; geolocation; four removable pins; six-pollutant detail; continuous OKLCH colour; cached server proxy; bounded 429/5xx retries; failure and missing-data states. Stale age is conservatively flagged after two hours, or when a client revalidation fails. API current data is MODELED, never MEASURED. Source and observation/retrieval timestamps are shown. Past and forecast hours are fetched but not yet displayed.
 
-Pending before Phase 2 acceptance: ~150 cities and global grid; batched heat surface and top/bottom 10; time scrubber and distinct forecast rendering; 24h sparkline; real 2D MapLibre fallback; pin spring and AQI-coloured rings; texture vendoring and day/night treatment. Current WebGL failure fallback is accessible city selection, not a 2D map.
+Pending before Phase 2 acceptance: ~150 cities and global grid; batched heat surface and top/bottom 10;  24h sparkline; real 2D MapLibre fallback; pin spring and AQI-coloured rings; texture vendoring and day/night treatment. A lazy MapLibre 2D map and automatic globe-failure switching are now implemented in source; browser verification is pending. Both maps use WebGL, so the city list remains the alternative when WebGL is entirely unavailable.
 
 Official documentation checked 8 November 2026: Open-Meteo supports multi-coordinate requests, current us_aqi, pollutant concentrations, hourly data and recent past_days. globe.gl uses `new Globe(element)`, `onGlobeClick` and `pointOfView`. Current scope requests one past day and five forecast days; no unsupported historical years are enabled. Models include CAMS global / European products; retain attribution to Open-Meteo and Copernicus Atmosphere Monitoring Service / CAMS ENSEMBLE as applicable. Earth-night texture currently references the globe.gl / three-globe example asset hosted on unpkg; validate its upstream attribution/licensing and vendor it before submission.
 
 The full `src/lib/air.ts` starter list contains coordinates only, never AQI fixtures. No live provider responses or performance results have been fabricated.
+
+### Phase 2 timeline and map checkpoint
+
+- Added lazy MapLibre GL JS view, colored GeoJSON markers, pin selection and camera movement. Official MapLibre Map and GeoJSONSource documentation checked 8 November 2026.
+- Natural Earth public-domain country geometry is fetched from its upstream GitHub repository; attribution is shown by the map. Offline geography / asset vendoring remains pending.
+- Added hourly timeline (-24h to +96h from the current provider hour). AQI uses exact returned hours; missing frames are No data, without interpolation. Forecast badge and timeline border are dashed. Historical hours remain modeled output, identified as HISTORICAL with the model disclaimer. Pollutants are hidden outside Now because only AQI and PM2.5 hourly fields are fetched.
+- Nine dependency-free Node assertions passed for frame lookup, real zero, missing hours, frame types, coordinate validation, category and number parsing. Added corresponding Vitest timeline tests. Full lint / tsc / Vitest / build remain blocked by absent dependencies and npm DNS failure.
+- Still pending: expanded global sampling, heat surface, sparkline, health recommendation, full provenance handling and visual QA. Phase 2 is not yet accepted.
