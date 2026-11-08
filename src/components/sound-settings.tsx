@@ -1,0 +1,4 @@
+'use client';
+import { useState } from 'react';
+import { setSoundSettings,soundSettings,unlockSounds,playUiSound } from '@/lib/ui-sound';
+export function SoundSettings(){const [open,setOpen]=useState(false);const [settings,setSettings]=useState({enabled:false,level:.2});return <details className="sound-settings" open={open}><summary onClick={e=>{e.preventDefault();unlockSounds();setSettings(soundSettings());setOpen(!open)}}>UI sounds</summary><div className="glass"><label><input type="checkbox" checked={settings.enabled} onChange={e=>{setSoundSettings(e.target.checked,settings.level);setSettings(soundSettings());playUiSound('toggle')}}/> Subtle UI sounds</label><label>Sound volume<input aria-label="UI sound volume" type="range" min={0} max={1} step={.01} value={settings.level} onChange={e=>{setSoundSettings(settings.enabled,Number(e.target.value));setSettings(soundSettings())}}/></label></div></details>}

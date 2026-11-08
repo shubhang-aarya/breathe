@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowRight, AudioLines, ChevronRight, Globe2, Info, Leaf, Radio, Wind, X, Zap } from "lucide-react";
 import { Glass, DataBadge } from "./glass";
 import { Explorer } from "./explorer";
+import { SoundSettings } from './sound-settings';
+import { unlockSounds } from '@/lib/ui-sound';
 import { Planet } from "./planet";
 import { useExperience } from "@/store/experience";
 
@@ -24,10 +26,10 @@ export function Experience(){
  const audio=useRef<AudioContext|null>(null);
 
  useEffect(()=>{if(!creditsOpen)return; const previous=document.activeElement as HTMLElement;close.current?.focus();const handler=(e:KeyboardEvent)=>{if(e.key==="Escape")setCreditsOpen(false);if(e.key==="Tab"){const nodes=document.querySelectorAll<HTMLElement>("[data-dialog] button, [data-dialog] a");const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}};document.addEventListener("keydown",handler);return()=>{document.removeEventListener("keydown",handler);previous?.focus()}},[creditsOpen]);
- function begin(){try{audio.current ??= new AudioContext();void audio.current.resume().catch(()=>{});}catch{/* Browsers without audio can still explore. */}enter();}
+ function begin(){unlockSounds();try{audio.current ??= new AudioContext();void audio.current.resume().catch(()=>{});}catch{/* Browsers without audio can still explore. */}enter();}
  return <div className={`experience ${lowPower?"low-power":""}`}>
   <a href="#main" className="skip-link">Skip to content</a>
-  <header className="topbar"><Link className="brand" href="/" aria-label="Breathe home"><Wind size={29} strokeWidth={1.5}/><span>BREATHE</span></Link><span className="edition">AIR QUALITY. HUMAN PERSPECTIVE.</span><div className="header-actions"><button className="quiet-button power-button" onClick={toggleLowPower} aria-pressed={lowPower}><Zap size={15}/><span>{lowPower?"Low power on":"Low power"}</span></button><button ref={creditsButton} className="icon-button" aria-label="Data and credits" onClick={()=>setCreditsOpen(true)}><Info size={19}/></button></div></header>
+  <header className="topbar"><Link className="brand" href="/" aria-label="Breathe home"><Wind size={29} strokeWidth={1.5}/><span>BREATHE</span></Link><span className="edition">AIR QUALITY. HUMAN PERSPECTIVE.</span><div className="header-actions"><SoundSettings/><button className="quiet-button power-button" onClick={toggleLowPower} aria-pressed={lowPower}><Zap size={15}/><span>{lowPower?"Low power on":"Low power"}</span></button><button ref={creditsButton} className="icon-button" aria-label="Data and credits" onClick={()=>setCreditsOpen(true)}><Info size={19}/></button></div></header>
   <main id="main"><AnimatePresence mode="wait">{!entered?<motion.div key="welcome" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0,scale:1.015,filter:"blur(5px)"}} transition={{duration:.5,ease:[.22,1,.36,1]}} className="welcome">
    <div className="hero-copy"><div className="eyebrow"><span className="tiny-dot"/> A LITTLE PERSPECTIVE CHANGES EVERYTHING</div><h1>The world turns.<br/>Let’s breathe<br/><span>better.</span></h1><p className="intro">Explore the air we share. Find a cleaner corner of the world. Tune into life somewhere new.</p><button className="enter-button" onClick={begin}>Enter BREATHE <ArrowRight size={20}/></button><div className="audio-note"><AudioLines size={15}/> A world of air. A little local radio. Sound is optional.</div></div>
    <Planet/>

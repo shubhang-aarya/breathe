@@ -81,3 +81,13 @@ User reported Phagwara not found because search only filtered the built-in catal
 Implemented selected-time solar day/night shader, layer/deep-link state, NOAA approximate subsolar calculation and tests, and a dynamic next/og image route advertised by page metadata. OG readings come from the server-side model client and carry source/type/times and stale labels. Missing data remains No data. Resource cleanup guards asynchronous texture loading after unmount. Shader adapter is isolated in JavaScript because third-party type definitions are unavailable offline; all domain functions and routes are TypeScript.
 
 Final checks passed: lint, typecheck, 51 tests and production webpack build. Browser shader visual QA, social crawler verification and Vercel deployment remain pending. This is a source checkpoint, not a claim that the public deployment milestone passed. The next build phase is Diwali Effect, guided breathing and optional UI sounds.
+
+## Phase 7 checkpoint — 2026-11-08
+
+Plan: verify festival dates and model archive contract, add neutral ±72h comparisons with incomplete-window handling, Good-air-only guided breathing, independent synthesized UI audio; validate and commit.
+
+Implemented verified 2024/2025/2026 festival dates, server-cached model window requests, three default cities plus search, explicit evening marker, AQI/PM2.5 charts and textual values, coverage/peak/percent summaries, no future data and IN PROGRESS status. Disabled pre-2022 coverage. No proven-cause claim is made.
+
+Added 1/3/5-minute breathing sessions with 4/4/6 cues, reduced-motion static orb, fresh Good-air gating and nearest available Good-air alternative. Radio ducks while the overlay is open and restores on cleanup. Optional synthesized UI sounds remain off until enabled after interaction and have separate saved volume/settings.
+
+Final verification passed: lint, typecheck, 56 tests across 18 files, production webpack build, git diff --check. Tests cover future-hour exclusion, missing/zero baseline, partial window coverage, dates/anchor, breathing radio-state restoration, and sound opt-in. Live historical window responses, browser/audio visuals, and deployment remain unverified. Dates/API sources and limitations are in README. Phase 8 (wind and PWA/offline) is next.

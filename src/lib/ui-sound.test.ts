@@ -1,0 +1,3 @@
+import { afterEach,expect,it,vi } from 'vitest';
+afterEach(()=>{vi.unstubAllGlobals();localStorage.clear()});
+it('stays silent until enabled after a user gesture and persists independent settings',async()=>{vi.resetModules();const createOscillator=vi.fn();vi.stubGlobal('AudioContext',class{state='running';resume=vi.fn().mockResolvedValue(undefined);createOscillator=createOscillator});const sound=await import('./ui-sound');sound.playUiSound('pin');expect(createOscillator).not.toHaveBeenCalled();sound.unlockSounds();sound.playUiSound('pin');expect(createOscillator).not.toHaveBeenCalled();sound.setSoundSettings(true,.15);expect(JSON.parse(localStorage.getItem('breathe-ui-sound')!)).toEqual({enabled:true,level:.15});sound.setSoundSettings(false,.2)});
