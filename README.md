@@ -22,6 +22,8 @@ Add your OpenAQ key to `.env.local`. Obtain it through the [OpenAQ platform](htt
 | `OPENAI_API_KEY` | Optional | Server-only grounded conversational explanations; sourced summary fallback without it |
 | `OPENAI_MODEL` | Optional | Responses API model; defaults to `gpt-4.1-mini` |
 | `BIGDATACLOUD_API_KEY` | Optional | Keyed server reverse geocoding for arbitrary globe pins; coordinates/search still work without it |
+| `UPSTASH_REDIS_REST_URL` | For shared quotas | Server-only Upstash Redis REST URL |
+| `UPSTASH_REDIS_REST_TOKEN` | For shared quotas | Server-only write-capable quota token |
 
 ```sh
 npm run check
@@ -67,7 +69,7 @@ No AQI readings are embedded in the city catalog or replaced with invented value
 
 Values distinguish **MEASURED**, **MODELED**, **FORECAST**, **HISTORICAL** and **STALE**. Stale responses preserve their original times and show **Not live**. A valid time describes the reading or forecast hour; retrieval time describes when the server obtained it. Daily history is a summary of available hourly AQI, not a regulatory daily AQI calculation. Charts preserve missing hours.
 
-Provider calls go through server routes. Normalized server responses are cached for roughly 15–30 minutes. Retry logic uses bounded exponential delays and respects provider cooldown headers. Client failures retain available data with stale treatment; persisted air, station and Diwali responses are a fallback. Cross-instance provider quota coordination is not implemented; the assistant has a bounded per-process request budget. Add a shared edge limit before a high-traffic public release.
+Provider calls go through server routes. Normalized server responses are cached for roughly 15–30 minutes. Retry logic uses bounded exponential delays and respects provider cooldown headers. Client failures retain available data with stale treatment; persisted air, station and Diwali responses are a fallback. Shared minute/hour reservations for OpenAQ and the assistant use atomic Redis scripts when configured. OpenAQ cooldowns are shared as well. Without Redis, development uses a bounded per-process fallback; Vercel AI explanations fall back to the sourced summary until shared limiting is configured. Configured quota-store failures do not silently bypass limiting. Budgets apply only to this application; use a dedicated upstream key.
 
 Diwali comparisons use a disclosed 18:00 IST analytical anchor, not a claimed ritual time. Future hours are excluded from observed historical comparisons, and incomplete windows are marked in progress. Association around the festival does not establish fireworks or any other factor as the proven cause. Pre-2022 years are disabled because the global CAMS archive begins in August 2022; individual requested windows can still be unavailable.
 
@@ -101,6 +103,7 @@ The ML experiment fits only historical CAMS targets paired with weather, tests o
 - [Radio Browser](https://api.radio-browser.info/): community directory. DNS-discovered mirrors, descriptive User-Agent and playback click registration. Streams remain controlled by their broadcasters.
 - [three-globe](https://github.com/vasturiano/three-globe): bundled example Earth textures, including Blue Marble imagery; bundled MIT license in `public/textures`.
 - [LiquidGlass by ybouane](https://github.com/ybouane/liquidglass): MIT button effects, version 1.0.3 loaded from a pinned CDN with a readable native-control fallback. Buttons use the upstream **Frosted Panel** recipe (`blurAmount: 0.25`, `cornerRadius: 30`) with button feedback enabled. Only empty decorative surfaces enter its renderer; native labels, focus and click handlers remain independent. CSS backdrop blur provides the real-page frosted fallback; the per-group WebGL capture uses a small neutral scene instead of repeatedly rasterizing the whole globe.
+- [Upstash Redis REST](https://upstash.com/docs/redis/features/restapi): optional shared, atomic OpenAQ/assistant quota reservations and provider cooldowns; server-only credentials.
 - [OpenAI Responses API](https://developers.openai.com/api/reference/resources/responses/methods/create): optional grounded explanations; server-only key, `store: false`, request timeout and explicit summary fallback.
 - [html-to-image](https://github.com/bubkoo/html-to-image): optional MIT PNG renderer, pinned to 1.11.13; native canvas fallback works without it.
 - [Geist](https://github.com/vercel/geist-font): locally served regular font through Next.js; SIL OFL 1.1. See [third-party notices](docs/THIRD_PARTY_NOTICES.md).
@@ -113,8 +116,10 @@ Third-party libraries and public datasets retain their own licenses and authorsh
 
 ## Deploy to Vercel
 
+Use [docs/RELEASE_RUNBOOK.md](docs/RELEASE_RUNBOOK.md) for the complete preview → verification → screenshots/Lighthouse → production sequence. `npm run release:doctor -- --url https://YOUR-DEPLOYMENT.vercel.app` records prerequisites/API checks without exposing secrets; `npm run release:lighthouse -- report.json https://YOUR-DEPLOYMENT.vercel.app` validates an actual desktop audit.
+
 1. Push this repository to your Git provider and import it into Vercel as a Next.js project, or run `npx vercel` from this directory.
-2. Set `OPENAQ_API_KEY` (and optional `OPENAI_API_KEY`, `OPENAI_MODEL`, `BIGDATACLOUD_API_KEY`) in Vercel's encrypted environment settings for the desired environments. Do not upload `.env.local`.
+2. Set `OPENAQ_API_KEY`, shared quota variables `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` (and optional `OPENAI_API_KEY`, `OPENAI_MODEL`, `BIGDATACLOUD_API_KEY`) in Vercel's encrypted environment settings for the desired environments. Do not upload `.env.local`.
 3. Use Node.js 24 (or another supported version meeting the engine requirement), install with `npm ci`, and build with `npm run build`. Keep the default Next.js output settings.
 4. Review the preview deployment with [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md), then promote it or run `npx vercel --prod`.
 5. Check live provider responses and HTTPS radio playback on the deployed origin. Confirm source times, stale behavior, mobile layout and service-worker updates before submission.
@@ -125,7 +130,7 @@ No public deployment URL is recorded yet. This environment has no linked Vercel 
 
 - Browser QA, actual GPU shader compilation, radio autoplay/crossfade, mobile touch behavior, install/offline reload and Lighthouse performance have not been certified. The desktop performance ≥85 target is unmeasured.
 - Radio autoplay can require pressing Play despite the entry gesture. Discovery prefers nearby, state, country, then distant geographic alternatives. Search results supply region/country directly; arbitrary pins need the optional reverse-geocoding key to add that metadata. Broadcasters may stop or reject streams.
-- OpenAQ searches fixed stations within 25 km and paginates directory/latest results in pages of 1,000 with a 20-page request budget. Exceeding the budget fails explicitly rather than claiming a nearest station from partial results. Available owner/license/attribution metadata is shown; missing metadata remains explicit. Cross-instance rate budgeting is not implemented.
+- OpenAQ searches fixed stations within 25 km and paginates directory/latest results in pages of 1,000 with a 20-page request budget. Exceeding the budget fails explicitly rather than claiming a nearest station from partial results. Available owner/license/attribution metadata is shown; missing metadata remains explicit. Cross-instance request budgeting is implemented through the optional shared Redis configuration and must be verified against the deployed store; local fallback alone is not distributed protection.
 - City/grid sampling is intentionally coarse. Rankings cover available loaded locations, not all cities worldwide. Wind is a coarse current model visualization.
 - Offline persistence covers modeled air, OpenAQ and festival responses, with original timestamps and explicit stale flags. Radio is unavailable offline. Initial offline access requires a successful prior online visit and service-worker installation; first-visit shell/asset warming and a native CDN-failure fallback are implemented, but actual offline reload remains a browser acceptance check.
 - Source timestamps can lag; provider/model estimates and station measurements may disagree. Health guidance is general information, not medical advice.

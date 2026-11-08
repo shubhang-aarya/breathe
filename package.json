@@ -13,7 +13,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "release:doctor": "node scripts/release-doctor.mjs",
+    "release:lighthouse": "node scripts/check-lighthouse.mjs"
   },
   "keywords": [],
   "author": "",

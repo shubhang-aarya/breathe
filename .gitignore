@@ -12,3 +12,6 @@ coverage/
 # Editor recovery files
 *.swp
 *.swo
+
+# Local release evidence (may contain target origins and browser captures)
+artifacts/

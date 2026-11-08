@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+vi.mock('server-only',()=>({}));
 const { fetchAir } = vi.hoisted(() => ({ fetchAir: vi.fn() }));
 vi.mock('@/lib/server/open-meteo', () => ({ fetchAir }));
 import { POST } from './route';
@@ -27,4 +28,10 @@ it('replaces unsupported generated quantities with the sourced fallback and neve
 it('does not answer without server grounding when the provider fails', async () => {
   fetchAir.mockRejectedValue(new Error('Provider failure'));
   const response = await POST(request({ lat: 0, lon: 0, question: 'Explain the air' })); expect(response.status).toBe(503); expect(await response.json()).toHaveProperty('error');
+});
+it('does not call a paid AI service on Vercel without shared request limiting',async()=>{
+ vi.stubEnv('VERCEL','1');vi.stubEnv('UPSTASH_REDIS_REST_URL','');vi.stubEnv('UPSTASH_REDIS_REST_TOKEN','');vi.stubEnv('OPENAI_API_KEY','test-only');fetchAir.mockResolvedValue([source]);
+ const outbound=vi.fn();vi.stubGlobal('fetch',outbound);
+ const response=await POST(request({lat:0,lon:0,question:'Explain the air'}));const result=await response.json();
+ expect(result.mode).toBe('summary');expect(result.note).toMatch(/shared request limiting/);expect(outbound).not.toHaveBeenCalled();
 });

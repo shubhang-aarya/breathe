@@ -2,6 +2,7 @@
 
 Automated checks and deployment/browser acceptance are separate. Run `npm run check` after code changes. Use a production build for service-worker tests.
 
+- [ ] Configure and test shared minute/hour quota reservations and OpenAQ cooldowns against a persistent Redis store; confirm configured-store failure does not bypass limits.
 - [ ] Deploy a Vercel preview with server-only OpenAQ credentials; verify no secret appears in HTML, JS or git.
 - [ ] Confirm live Open-Meteo/OpenAQ responses, correct units, null/zero handling, observation and retrieval times, and honest unavailable states.
 - [ ] Test 429 cooldowns and network failures without repeatedly calling live providers; use controlled responses.
@@ -27,3 +28,7 @@ Unverified items stay unchecked. This document is a test plan, not evidence of p
 ## Latest automated evidence
 
 The latest source pass is recorded in `PHASES.md`. An automated pass does not check any browser/deployment box above. Preview startup was retried and failed with `listen EPERM` on localhost; a direct weather request failed with `ENOTFOUND`. Screenshot and Lighthouse capture remain blocked by those environment limits.
+
+## Reproducible release tools
+
+Follow `RELEASE_RUNBOOK.md`. Run `npm run release:doctor -- --url <origin>` for saved prerequisite/API evidence and `npm run release:lighthouse -- <actual-report.json> <origin>` to check the measured desktop score. A blocked diagnostic remains incomplete. These scripts do not check any browser-acceptance box by themselves.
