@@ -136,3 +136,9 @@ The catalog now contains 150 distinct city coordinates plus 84 global grid sampl
 The location card includes sourced, general AirNow guidance and the Berkeley Earth approximation only when all 24 unique hourly modeled PM2.5 values exist. Eight additional direct Node assertions passed for catalog size, uniqueness, bounds, rankings, missing data and the complete-day requirement. Full Vitest equivalents are included.
 
 **Acceptance status:** source implementation has advanced, but Phase 2 is not verified complete. npm continues to fail with ENOTFOUND. Required lint, TypeScript, Vitest, production build and browser checks cannot run. Motion quality, pin drop/count-up polish, texture readiness, performance, responsiveness, API response contracts and deployment must be verified before Phase 2 acceptance. No real API response, deployed build, screenshot or Lighthouse result is claimed. Radio remains Phase 3.
+
+## Verification update — 8 November 2026
+
+Dependencies were installed from the user's Terminal. ESLint, TypeScript and all 19 Vitest tests now pass. Production compilation, prerendering and trace generation passed with Next's webpack builder. The default Turbopack builder failed inside the restricted execution environment while attempting to bind a port for CSS processing; `npm run build` now selects the verified webpack builder. Earlier blocked-check records describe previous checkpoints, not these current results.
+
+The user's npm install reported 12 vulnerabilities (9 moderate, 3 critical). The detailed audit cannot be retrieved from the agent environment because registry DNS remains blocked. Vulnerability triage is pending the user's `npm audit --json` output; no forced dependency upgrades or claim of security clearance has been made. Browser, live API, animation and performance QA remain pending.

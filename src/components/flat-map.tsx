@@ -7,7 +7,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 function features(data:Air[],pins:Place[]){return {type:'FeatureCollection' as const,features:[...data.filter(d=>d.aqi!==null).map(d=>({type:'Feature' as const,geometry:{type:'Point' as const,coordinates:[d.place.lon,d.place.lat]},properties:{name:d.place.name,color:airColor(d.aqi),pin:false}})),...pins.map(p=>({type:'Feature' as const,geometry:{type:'Point' as const,coordinates:[p.lon,p.lat]},properties:{name:p.name,color:'#f0f3ef',pin:true}}))]}}
 export default function FlatMap({data,pins,active,onPin}:{data:Air[];pins:Place[];active:Place|null;onPin:(p:Place)=>void}){
  const host=useRef<HTMLDivElement>(null);const map=useRef<MapType|null>(null);const latest=useRef({data,pins,active,onPin});const [failed,setFailed]=useState(false);
- useEffect(()=>{latest.current={data,pins,active,onPin};const source=map.current?.getSource('air');if(source&&'setData' in source)source.setData(features(data,pins));},[data,pins,active,onPin]);
+ useEffect(()=>{latest.current={data,pins,active,onPin};const source=map.current?.getSource<import('maplibre-gl').GeoJSONSource>('air');if(source)source.setData(features(data,pins));},[data,pins,active,onPin]);
  useEffect(()=>{if(active)map.current?.flyTo({center:[active.lon,active.lat],zoom:5,essential:false})},[active]);
  useEffect(()=>{
  let disposed=false;void import('maplibre-gl').then(({Map,NavigationControl})=>{

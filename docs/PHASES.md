@@ -29,3 +29,7 @@ Implemented 84-point coarse global grid in six batches, sampled hex-bin colors, 
 ### Phase 2 final source checkpoint — 2026-11-08
 
 Expanded catalog to 150 cities and bounded city requests. Added loaded-city best/worst lists, model-data hotspot rings, marker pins, spring card entry, sourced health recommendation and complete-day cigarette approximation. Eight direct Node assertions passed. Required lint/typecheck/Vitest/build all attempted and blocked by dependency installation ENOTFOUND. git diff --check passed. Acceptance remains blocked; do not mark the phase verified or proceed to deployment on these results.
+
+### Dependency verification unblocked — 2026-11-08
+
+User installed dependencies in Terminal. Fixed Next Link linting, MapLibre GeoJSONSource typing, globe ring callback typing and PostCSS export warning. ESLint/typecheck/19 tests passed. Production webpack build passed; Turbopack failed on a sandbox-denied port binding during CSS processing. Set production build to webpack. Recorded lockfile for reproducibility. Security triage remains pending detailed audit output; browser/runtime acceptance is not claimed.
