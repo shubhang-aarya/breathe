@@ -7,7 +7,9 @@ import { useClock } from '@/lib/use-clock';
 import { useOffline } from '@/lib/use-offline';
 import { DataBadge } from './glass';
 import { StationPanel } from './station-panel';
-export function LiveReading({place}:{place:Place}){
+import { ReportedAQI } from './reported-aqi';
+export function LiveReading({place}:{place:Place}){return <ReportedAQI place={place} fallback={<OpenAQReading place={place}/>}/>;}
+function OpenAQReading({place}:{place:Place}){
  const query=useStation(place),now=useClock(),offline=useOffline();
  const station=query.data?.status==='ok'?query.data.station:null,index=station?.particleIndex;
  const live=!offline&&!query.isError&&!query.data?.offlineCached&&freshParticleIndex(index,now);
