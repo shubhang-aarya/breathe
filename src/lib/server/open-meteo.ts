@@ -1,12 +1,13 @@
 import 'server-only';
+import { unstable_cache } from 'next/cache';
 import { finite, pollutants, type Air, type Place } from '@/lib/air';
 // Next's persistent Data Cache works across serverless invocations. Failed revalidation
 // preserves its prior response; observation timestamps are surfaced to the client.
-export async function fetchAir(places:Place[]):Promise<Air[]>{
+async function requestAir(places:Place[]):Promise<Air[]>{
  const params=new URLSearchParams({latitude:places.map(p=>p.lat.toFixed(3)).join(','),longitude:places.map(p=>p.lon.toFixed(3)).join(','),current:['us_aqi',...pollutants].join(','),hourly:'us_aqi,pm2_5',past_days:'1',forecast_days:'5',timezone:'GMT'});
  let response:Response|undefined;
  for(let attempt=0;attempt<3;attempt++){
-  try { response=await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?${params}`,{next:{revalidate:900},signal:AbortSignal.timeout(12000)}); } catch { if(attempt===2)throw new Error('Air quality provider could not be reached');await new Promise(resolve=>setTimeout(resolve,500*2**attempt));continue; }
+  try { response=await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?${params}`,{cache:'no-store',signal:AbortSignal.timeout(12000)}); } catch { if(attempt===2)throw new Error('Air quality provider could not be reached');await new Promise(resolve=>setTimeout(resolve,500*2**attempt));continue; }
   if(response.ok)break;
   if(response.status!==429&&response.status<500)throw new Error('Air quality provider rejected this request');
   if(attempt<2)await new Promise(resolve=>setTimeout(resolve,Math.min(4000,500*2**attempt)+Math.random()*200));
@@ -22,3 +23,6 @@ export async function fetchAir(places:Place[]):Promise<Air[]>{
   return {place:places[index],aqi:finite(current?.us_aqi),pollutants:Object.fromEntries(pollutants.map(key=>[key,finite(current?.[key])])) as Air['pollutants'],observedAt,fetchedAt,source:'Open-Meteo · CAMS',kind:'MODELED',hours:(row.hourly?.time??[]).flatMap((time,i)=>typeof time==='string'?[{time:`${time}Z`,aqi:finite(row.hourly?.us_aqi?.[i]),pm25:finite(row.hourly?.pm2_5?.[i])}]:[])};
  });
 }
+
+// Cache the normalized payload, preserving its original retrieval timestamp.
+export const fetchAir=unstable_cache(requestAir,['cams-air-v2'],{revalidate:900});

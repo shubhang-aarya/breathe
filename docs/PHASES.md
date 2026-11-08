@@ -21,3 +21,7 @@ Checks attempted: lint, typecheck, tests and build all blocked (executables unav
 ### Phase 2 continuation — 2026-11-08
 
 Added MapLibre 2D view and globe failure switching, exact-hour AQI timeline and forecast distinction. Kept missing frame AQI empty and withheld current pollutant values outside Now. Nine direct Node domain assertions passed. Added timeline Vitest coverage. Retried npm installation: ENOTFOUND persists. Ran required commands: lint, typecheck, tests and build cannot find their executables. git diff --check passed. Browser QA remains blocked. This is a partial phase checkpoint, not a deployable verification claim.
+
+### Global coverage continuation — 2026-11-08
+
+Implemented 84-point coarse global grid in six batches, sampled hex-bin colors, lazy 24-hour chart with textual values, and preserved server retrieval timestamps by caching normalized responses. Added sampling/trend tests and preserved base data type alongside STALE. Ten direct Node assertions passed; git diff --check passed. Lint, typecheck, Vitest and build were attempted but executables are unavailable. Remaining Phase 2 work includes city coverage expansion, ranking/hotspots, pin polish, recommendations and all browser/runtime checks. Do not describe this phase as completed.

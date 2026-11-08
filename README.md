@@ -120,3 +120,11 @@ The full `src/lib/air.ts` starter list contains coordinates only, never AQI fixt
 - Added hourly timeline (-24h to +96h from the current provider hour). AQI uses exact returned hours; missing frames are No data, without interpolation. Forecast badge and timeline border are dashed. Historical hours remain modeled output, identified as HISTORICAL with the model disclaimer. Pollutants are hidden outside Now because only AQI and PM2.5 hourly fields are fetched.
 - Nine dependency-free Node assertions passed for frame lookup, real zero, missing hours, frame types, coordinate validation, category and number parsing. Added corresponding Vitest timeline tests. Full lint / tsc / Vitest / build remain blocked by absent dependencies and npm DNS failure.
 - Still pending: expanded global sampling, heat surface, sparkline, health recommendation, full provenance handling and visual QA. Phase 2 is not yet accepted.
+
+### Global sampling and trend checkpoint
+
+Added 84 fixed global sampling coordinates in six bounded batches (14 coordinates per provider request), alongside 16 starter cities. Coordinate metadata never substitutes for air readings. Missing batches remain missing; the UI shows the loaded batch count. A hex layer averages only available returned AQI values inside each sampled bin; this is a coarse model visualization, not continuous measured coverage. City expansion to approximately 150 and top/bottom ranking remain pending.
+
+Added lazy Recharts 24-hour history, no bridging of null gaps, and a keyboard-readable hourly list. The historical chart is labeled HISTORICAL / CAMS modeled data with its end time. Stale detail readings now retain their FORECAST / HISTORICAL / MODELED badge in addition to STALE. Normalized server payloads use a persistent 15-minute Next cache so retrieval timestamps survive revalidation.
+
+Ten dependency-free sampling / time-series assertions passed in Node. Corresponding Vitest coverage was added. Full lint, typecheck, tests, build and browser verification remain blocked by missing installed dependencies. This remains partial Phase 2 source, not a tested release.
