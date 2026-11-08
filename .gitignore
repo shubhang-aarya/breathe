@@ -8,3 +8,7 @@ out/
 coverage/
 
 .vercel/
+
+# Editor recovery files
+*.swp
+*.swo

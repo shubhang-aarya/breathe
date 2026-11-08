@@ -11,6 +11,7 @@ import { parseDeepLink,buildDeepLink,defaultLayers,type Layers } from '@/lib/dee
 import { playUiSound } from '@/lib/ui-sound';
 import { distanceKm } from '@/lib/openaq';
 import { useOffline } from '@/lib/use-offline';
+import { useRadioNavigation } from '@/lib/use-radio-navigation';
 import { useClock } from '@/lib/use-clock';
 import { isFreshAir } from '@/lib/air-summary';
 import { fetchAirWithOffline } from '@/lib/offline-air';
@@ -39,6 +40,7 @@ export function Explorer(){
  const title=useRef<HTMLHeadingElement>(null);useEffect(()=>{title.current?.focus()},[]);
  const lowPower=useExperience(s=>s.lowPower);const [layers,setLayers]=useState<Layers>(defaultLayers);const rouletteHistory=useRef<string[]>([]);const [diwali,setDiwali]=useState(false);const [breathing,setBreathing]=useState(false);const [insights,setInsights]=useState(false);const [view,setView]=useState<'globe'|'map'>('globe');const [offset,setOffset]=useState(0);const [pins,setPins]=useState<Place[]>([]);const [active,setActive]=useState<Place|null>(null);const [message,setMessage]=useState('');
  const resolveVersion=useRef(0);
+ const closePanels=useCallback(()=>{setDiwali(false);setBreathing(false);setInsights(false);setTools(false)},[]);useRadioNavigation(closePanels);
  const pin=useCallback((place:Place)=>{const version=++resolveVersion.current;setPins(previous=>previous.some(p=>coordinateKey(p)===coordinateKey(place))?previous:previous.length<4?[...previous,place]:[...previous.slice(1),place]);setActive(place);try{localStorage.setItem('breathe-last-pin',JSON.stringify(place))}catch{}playUiSound('pin');if(!place.countryCode&&navigator.onLine){void fetch(`/api/reverse?lat=${place.lat}&lon=${place.lon}`).then(r=>r.ok?r.json():null).then(result=>{if(version!==resolveVersion.current||!result?.place)return;const resolved={...place,...result.place};setActive(resolved);setPins(previous=>previous.map(p=>coordinateKey(p)===coordinateKey(place)?resolved:p));try{localStorage.setItem('breathe-last-pin',JSON.stringify(resolved))}catch{}}).catch(()=>{})}},[]);
  useEffect(()=>{const restore=()=>{const link=parseDeepLink(new URLSearchParams(window.location.search));if(link.place)pin(link.place);else if(!navigator.onLine){try{const saved=JSON.parse(localStorage.getItem('breathe-last-pin')??'null');if(saved&&typeof saved.name==='string'&&typeof saved.lat==='number'&&typeof saved.lon==='number'&&Math.abs(saved.lat)<=90&&Math.abs(saved.lon)<=180)pin(saved)}catch{}}setOffset(link.offset);setLayers(link.layers)};restore();addEventListener('popstate',restore);return()=>removeEventListener('popstate',restore)},[pin]);
  const wind=useQuery({queryKey:['wind'],queryFn:async():Promise<WindResult>=>{const r=await fetch('/api/wind');if(!r.ok)throw new Error('Wind unavailable');return r.json()},enabled:!!layers.wind&&!lowPower&&offset===0,retry:1,staleTime:20*60000});

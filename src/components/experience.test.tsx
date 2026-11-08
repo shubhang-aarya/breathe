@@ -7,8 +7,10 @@ vi.mock('@/lib/audio-player',()=>({unlockRadioAudio:vi.fn()}));
 vi.mock('./planet',()=>({Planet:()=> <div aria-hidden="true"/>}));
 vi.mock('./explorer',()=>({Explorer:()=> <h1>Explorer ready</h1>}));
 vi.mock('framer-motion',async()=>{const React=await import('react');return {AnimatePresence:({children}:{children:React.ReactNode})=>children,motion:new Proxy({},{get:(_,tag:string)=>React.forwardRef(function Mock({children,initial,animate,exit,transition,...props}:Record<string,unknown>,ref){void initial;void animate;void exit;void transition;return React.createElement(tag,{...props,ref},children as React.ReactNode)})})}});
-afterEach(()=>{cleanup();useExperience.setState({entered:false,lowPower:false})});
+afterEach(()=>{cleanup();useExperience.setState({entered:false,lowPower:false,radioRequest:0,breathing:false})});
 describe('entry experience',()=>{
  it('enters without requiring audio',async()=>{render(<Experience/>);fireEvent.click(screen.getByRole('button',{name:/Enter BREATHE/}));expect(await screen.findByRole('heading',{name:'Explorer ready'})).toBeVisible()});
+ it('returns from the explorer to a focused welcome heading',async()=>{useExperience.setState({entered:true});render(<Experience/>);await screen.findByRole('heading',{name:'Explorer ready'});fireEvent.click(screen.getByRole('button',{name:'Home'}));expect(screen.getByRole('heading',{name:/The world turns/})).toHaveFocus();expect(useExperience.getState().entered).toBe(false)});
+ it('offers Radio on the welcome page and enters before requesting the player',()=>{render(<Experience/>);fireEvent.click(screen.getByRole('button',{name:'Radio'}));expect(useExperience.getState().entered).toBe(true);expect(useExperience.getState().radioRequest).toBe(1)});
  it('opens credits and closes with Escape',()=>{render(<Experience/>);fireEvent.click(screen.getByRole('button',{name:'Data and credits'}));expect(screen.getByRole('dialog')).toBeVisible();expect(screen.getByRole('button',{name:'Close data and credits'})).toHaveFocus();fireEvent.keyDown(document,{key:'Escape'});expect(screen.queryByRole('dialog')).not.toBeInTheDocument()});
 });

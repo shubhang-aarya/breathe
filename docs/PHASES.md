@@ -135,3 +135,9 @@ Updated README, feature checklist, environment table, architecture/methodology, 
 External acceptance remains blocked: localhost production startup returns listen EPERM, a direct weather API request returns ENOTFOUND, no browser-control tool is exposed, and no Vercel CLI/project/remote is available. No screenshot, live-provider acceptance, public deployment or Lighthouse score is claimed. Original build/audit history remains above for traceability.
 
 Final automated verification for this continuation: ESLint and TypeScript passed; 91 tests across 30 files passed; production webpack build and git diff --check passed. Coverage added for no-key server grounding, untrusted client AQI rejection, unsupported generated quantities, cross-origin request rejection, rapid radio deck reuse, pagination completeness, safe attribution links, cached original timestamps and invalid calendar/layer deep links. Credential-pattern scan found no key patterns in tracked text. These results do not certify browser rendering, permissions, playback, offline reload, deployment or Lighthouse targets.
+
+## Navigation and radio shortcut — 2026-11-08
+
+Added Home in the main header and made the brand return to the welcome screen with heading focus. Added Radio in the header (also available before entering) and a common Back to globe / Radio navigation strip in Diwali, insights, toolkit and breathing panels. Panel exits remain visible while scrolling. Radio requests close overlays, then scroll and focus the player after modal focus restoration; reduced-motion preferences use immediate scrolling. The radio destination is a labeled, focusable region.
+
+Verification: lint, TypeScript, 95 tests across 31 files, production webpack build and git diff --check passed. New tests cover welcome return/focus, entry via the Radio shortcut, explicit panel back behavior, and radio focus/scroll after closing a panel. Browser visual acceptance remains pending in this restricted environment.

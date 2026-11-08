@@ -59,6 +59,8 @@ npm start
 | ML prediction | Experimental ridge regression on modeled history + weather; chronological holdout MAE and baseline, explicit ML ESTIMATE / FORECAST labels |
 | Additional bonuses | Geolocation, loaded-city cleaner-air ranking, anomaly flags and multi-API integration |
 
+The header offers **Home** and **Radio** navigation. Diwali, insights, toolkit and breathing panels include **Back to globe** and **Radio** controls. Radio closes overlays, scrolls to the player and moves keyboard focus without changing playback settings.
+
 ## Data integrity
 
 No AQI readings are embedded in the city catalog or replaced with invented values. Missing values remain **No data** or **N/A**. The primary scale is **US AQI**. Open-Meteo's AQI is a model estimate; OpenAQ's raw instantaneous concentrations are shown separately and are not incorrectly converted into regulatory AQI.
