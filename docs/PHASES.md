@@ -91,3 +91,7 @@ Implemented verified 2024/2025/2026 festival dates, server-cached model window r
 Added 1/3/5-minute breathing sessions with 4/4/6 cues, reduced-motion static orb, fresh Good-air gating and nearest available Good-air alternative. Radio ducks while the overlay is open and restores on cleanup. Optional synthesized UI sounds remain off until enabled after interaction and have separate saved volume/settings.
 
 Final verification passed: lint, typecheck, 56 tests across 18 files, production webpack build, git diff --check. Tests cover future-hour exclusion, missing/zero baseline, partial window coverage, dates/anchor, breathing radio-state restoration, and sound opt-in. Live historical window responses, browser/audio visuals, and deployment remain unverified. Dates/API sources and limitations are in README. Phase 8 (wind and PWA/offline) is next.
+
+### Requested LiquidGlass wrapper — 2026-11-08
+
+Read the supplied ybouane/liquidglass repository and its 1.0.3 package/API documentation. Added a lazy, pinned documented CDN loader because npm DNS remains blocked. Integrated a shared renderer per main button group with direct-child structure, button mode, restrained refraction and native semantic controls. Low power, reduced motion and initialization failure retain the frosted fallback. Added group teardown and functionality tests. Lint, typecheck, 59 tests, production build and git diff --check passed. Live shader appearance and CDN verification are pending; no browser-rendering success is claimed.

@@ -1,0 +1,12 @@
+import React from 'react';
+import { afterEach,expect,it,vi } from 'vitest';
+import { cleanup,fireEvent,render,screen,waitFor } from '@testing-library/react';
+import { LiquidButtons } from './liquid-buttons';
+import { useExperience } from '@/store/experience';
+const {init,destroy}=vi.hoisted(()=>({init:vi.fn(),destroy:vi.fn()}));
+vi.mock('@/lib/liquid-glass-loader',()=>({loadLiquidGlass:async()=>({LiquidGlass:{init}})}));
+afterEach(()=>{cleanup();useExperience.setState({lowPower:false});vi.unstubAllGlobals();vi.clearAllMocks()});
+function media(reduced=false){vi.stubGlobal('matchMedia',vi.fn().mockReturnValue({matches:reduced}))}
+it('shares one renderer across native buttons and cleans up on unmount',async()=>{media();init.mockResolvedValue({destroy,markChanged:vi.fn()});const click=vi.fn();const {unmount}=render(<LiquidButtons><button onClick={click}>Play</button><button disabled>Next</button></LiquidButtons>);await waitFor(()=>expect(init).toHaveBeenCalledTimes(1));const options=init.mock.calls[0][0];expect(options.glassElements).toHaveLength(2);expect(options.glassElements.every((b:HTMLElement)=>b.parentElement===options.root)).toBe(true);fireEvent.click(screen.getByRole('button',{name:'Play'}));expect(click).toHaveBeenCalledOnce();expect(screen.getByRole('button',{name:'Next'})).toBeDisabled();unmount();expect(destroy).toHaveBeenCalledOnce()});
+it('keeps fallback buttons usable when the effect fails',async()=>{media();init.mockRejectedValue(new Error('no WebGL'));const click=vi.fn();render(<LiquidButtons><button onClick={click}>Mute</button></LiquidButtons>);await waitFor(()=>expect(init).toHaveBeenCalledOnce());fireEvent.click(screen.getByRole('button',{name:'Mute'}));expect(click).toHaveBeenCalledOnce()});
+it('does not start WebGL under low-power or reduced-motion settings',()=>{media(true);const {unmount}=render(<LiquidButtons><button>One</button></LiquidButtons>);expect(init).not.toHaveBeenCalled();unmount();media(false);useExperience.setState({lowPower:true});render(<LiquidButtons><button>Two</button></LiquidButtons>);expect(init).not.toHaveBeenCalled()});

@@ -210,3 +210,11 @@ The small GPU adapter is isolated in earth-material.js; domain calculations, API
 - UI sounds use quiet synthesized oscillators for pin/card/toggle/alert events, enabled only after interaction and explicit opt-in. They have independent persisted settings and volume. No sound assets or CORS-based stream analysis is used.
 
 Phase 7 source checks: lint, typecheck, 56 tests and production build pass. Browser/audio QA and live historical-provider verification remain pending, as does Vercel deployment. No public URL, live Diwali data response or screenshot has been fabricated. Wind/PWA/offline and remaining bonuses are Phase 8.
+
+## Requested LiquidGlass button integration
+
+Main button groups use ybouane/liquidglass (https://github.com/ybouane/liquidglass), MIT, pinned to the upstream bundled ESM distribution at version 1.0.3. npm installation was attempted but registry DNS is blocked, so the adapter uses the CDN import option documented by the author. No floating drag behavior is enabled. Native buttons retain their events, focus, ARIA attributes and disabled behavior. The entry CTA, header controls, explorer actions, radio controls and breathing Begin button share one renderer per group rather than one per button.
+
+The library requires button elements to be direct root children. Each group provides a small neutral capture-light sibling; refraction captures that group's local siblings, not the globe outside the root. Instances are destroyed on unmount, button-membership changes or low-power activation. Reduced-motion mode, missing WebGL or failed CDN initialization keep the CSS frosted fallback. The app does not depend on the CDN for button functionality. A restrictive CSP must allow the pinned jsDelivr module to enable enhancement; the fallback works when it is blocked.
+
+Checks passed: lint, typecheck, 59 tests and production build. Tests mock the library boundary to verify shared roots, native click/disabled behavior, teardown and fail-safe controls. They do not certify the external shader rendering. Browser appearance/performance and the CDN fetch still need verification in the user's running browser. Library credit appears in Data & Credits. No API credentials are sent to the CDN.
