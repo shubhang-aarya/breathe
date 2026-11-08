@@ -31,7 +31,7 @@ Commit the generated package-lock.json once installation succeeds, then use npm 
 | --- | --- | --- |
 | 1 | Scaffold, tokens, glass primitives, splash | Implemented; execution checks blocked by registry DNS |
 | 2 | globe.gl, Open-Meteo, city search, pins | Partial source implementation; runtime checks blocked |
-| 3 | Radio Browser, playback, crossfade | Planned |
+| 3 | Radio Browser, playback, crossfade | Core implemented; live verification and region fallback pending |
 | 4 | OpenAQ, provenance, resilient proxy/cache | Planned |
 | 5 | History, comparison, health, forecast; first deploy | Planned |
 | 6 | Deep links, layers, terminator, cigarette equivalent, roulette | Planned |
@@ -152,3 +152,13 @@ Installation still fails from the agent environment (ENOTFOUND). package-lock.js
 ### Security migration verified — 8 November 2026
 
 The user's post-install npm audit reports zero known vulnerabilities. Resolved versions: MapLibre 6.17.0, Vitest 5.1.0, and the scoped minimatch dependency 11.0.5. Tinypool is absent from the resolved tree. The updated lockfile is committed with the manifest. ESLint, TypeScript, all 19 tests across six files, and the production webpack build passed against the upgraded versions. This supersedes the pending-install status above. Browser interaction and live external API QA remain separate outstanding checks; a clean audit is not a guarantee that software has no vulnerabilities.
+
+## Phase 3 radio checkpoint
+
+Official Radio Browser directory and mirror API documentation checked 8 November 2026. Implemented DNS discovery through all.api.radio-browser.info, reverse-lookup hostname validation, randomized discovered mirrors and fallback hosts, descriptive User-Agent, HTTPS directory requests, bounded mirror failover and 20-minute normalized cache. Discovery uses geo-distance within 150 km, then explicitly labelled regional alternatives within 1,500 km. Station candidates require lastcheckok=1, MP3/AAC/AAC+ and an HTTPS url_resolved; HLS is excluded. The directory is community-maintained and does not guarantee stream uptime.
+
+The native-element player includes play/pause, previous/next, station list, logo fallback, decorative equalizer, mute, persisted volume/mute, a 600ms two-stream crossfade, 220ms mute fade, 12s connection timeout, bounded failed-station skipping, no-stream and offline states. It makes no CORS-dependent audio analysis requests. Successful playback registers a Radio Browser click via a same-origin server route. Browser autoplay may still require tapping Play; AudioContext unlock alone cannot guarantee remote media playback permission.
+
+Pending Phase 3 acceptance: reverse-geocoded country/state fallback, a verified per-element gesture unlock, live mirror/stream checks and browser QA. Public Nominatim was not integrated: its application-wide 1 request/second policy requires a shared rate limiter across Vercel instances. BigDataCloud's free endpoint is client-only and is not appropriate for a server proxy. Geo-distance results remain clearly labelled as directory matches rather than inferred location identity. No unsupported claim that a selected station is in the pinned country is made.
+
+Validation: lint, typecheck, 24 tests (including secure station filtering and native-element crossfade/mute cleanup), and production build pass before the final logo addition; the final checks below are recorded in docs/PHASES.md. Network runtime testing and visual checks are separate from these build results.

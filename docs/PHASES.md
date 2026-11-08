@@ -37,3 +37,11 @@ User installed dependencies in Terminal. Fixed Next Link linting, MapLibre GeoJS
 ### Security migration verified — 2026-11-08
 
 User installed the prepared upgrades and supplied a zero-vulnerability audit. Verified the resolved MapLibre 6.17.0, Vitest 5.1.0 and scoped minimatch 11.0.5 versions. Lint, typecheck, all 19 tests and production build passed. Commit manifest, lockfile and verification record together. Live API / browser and remaining animation QA still pending before full Phase 2 acceptance.
+
+## Phase 3 core radio — 2026-11-08
+
+Plan: official API verification; DNS mirror discovery and server proxy; HTTPS station filtering; native-element player with crossfade and persistent controls; tests and production build.
+
+Implemented core radio. Initial validation passed lint, TypeScript, 24 tests and production build. Country/state geocoding fallback, media gesture unlock and live browser checks remain pending. This is a working source checkpoint, not a claim of validated live playback. Final logo fallback added and all checks rerun before commit.
+
+Final Phase 3 checkpoint checks: lint, typecheck, 24 tests and production build passed. Local preview attempt failed with listen EPERM on port 3000 in the restricted environment; browser playback QA could not run.
