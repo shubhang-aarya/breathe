@@ -30,7 +30,7 @@
     "globe.gl": "^2.46.0",
     "culori": "^4.0.0",
     "server-only": "^0.0.1",
-    "maplibre-gl": "^5.0.0",
+    "maplibre-gl": "^6.17.0",
     "recharts": "^3.0.0"
   },
   "devDependencies": {
@@ -42,10 +42,18 @@
     "@tailwindcss/postcss": "^4.0.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.0.0",
-    "vitest": "^3.0.0",
+    "vitest": "^5.1.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/jest-dom": "^6.0.0",
     "jsdom": "^26.0.0",
     "@types/culori": "^4.0.0"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
+    }
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

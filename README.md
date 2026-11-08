@@ -6,7 +6,7 @@ An original air quality intelligence platform for Lets Code Diwali Challenge 202
 
 ## Run locally
 
-Requires Node 20.9+ and npm.
+Requires Node 22.12+ and npm (the pending Vitest 5 security upgrade requires Node 22.12+).
 
 ```sh
 npm install
@@ -142,3 +142,13 @@ The location card includes sourced, general AirNow guidance and the Berkeley Ear
 Dependencies were installed from the user's Terminal. ESLint, TypeScript and all 19 Vitest tests now pass. Production compilation, prerendering and trace generation passed with Next's webpack builder. The default Turbopack builder failed inside the restricted execution environment while attempting to bind a port for CSS processing; `npm run build` now selects the verified webpack builder. Earlier blocked-check records describe previous checkpoints, not these current results.
 
 The user's npm install reported 12 vulnerabilities (9 moderate, 3 critical). The detailed audit cannot be retrieved from the agent environment because registry DNS remains blocked. Vulnerability triage is pending the user's `npm audit --json` output; no forced dependency upgrades or claim of security clearance has been made. Browser, live API, animation and performance QA remain pending.
+
+### Security remediation prepared — 8 November 2026
+
+The supplied audit identifies MapLibre <=6.4.0, Vitest/mocker/tinypool, and the minimatch chain under TypeScript ESLint. Prepared MapLibre ^6.17.0 and Vitest ^5.1.0, plus a scoped minimatch ^11.0.1 override under @typescript-eslint/typescript-estree to avoid npm's suggested Next ESLint major downgrade. The scoped override crosses a major version and requires lint regression verification. Node minimum raised to 22.12 for Vitest 5. Existing Node 24 meets this requirement.
+
+Installation still fails from the agent environment (ENOTFOUND). package-lock.json and node_modules therefore still describe the prior versions. Run npm install in the user's Terminal, then npm audit --json; re-run lint, typecheck, tests and build before committing the dependency migration. Prior passing checks apply to the earlier dependency set only. No clean audit or upgraded-version compatibility is claimed yet.
+
+### Security migration verified — 8 November 2026
+
+The user's post-install npm audit reports zero known vulnerabilities. Resolved versions: MapLibre 6.17.0, Vitest 5.1.0, and the scoped minimatch dependency 11.0.5. Tinypool is absent from the resolved tree. The updated lockfile is committed with the manifest. ESLint, TypeScript, all 19 tests across six files, and the production webpack build passed against the upgraded versions. This supersedes the pending-install status above. Browser interaction and live external API QA remain separate outstanding checks; a clean audit is not a guarantee that software has no vulnerabilities.

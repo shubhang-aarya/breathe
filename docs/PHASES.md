@@ -33,3 +33,7 @@ Expanded catalog to 150 cities and bounded city requests. Added loaded-city best
 ### Dependency verification unblocked — 2026-11-08
 
 User installed dependencies in Terminal. Fixed Next Link linting, MapLibre GeoJSONSource typing, globe ring callback typing and PostCSS export warning. ESLint/typecheck/19 tests passed. Production webpack build passed; Turbopack failed on a sandbox-denied port binding during CSS processing. Set production build to webpack. Recorded lockfile for reproducibility. Security triage remains pending detailed audit output; browser/runtime acceptance is not claimed.
+
+### Security migration verified — 2026-11-08
+
+User installed the prepared upgrades and supplied a zero-vulnerability audit. Verified the resolved MapLibre 6.17.0, Vitest 5.1.0 and scoped minimatch 11.0.5 versions. Lint, typecheck, all 19 tests and production build passed. Commit manifest, lockfile and verification record together. Live API / browser and remaining animation QA still pending before full Phase 2 acceptance.
