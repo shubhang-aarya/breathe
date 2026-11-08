@@ -67,3 +67,7 @@ Recovered interrupted history/compare/forecast/health source, added keyboard dia
 ## Phase 6 first checkpoint — 2026-11-08
 
 Plan: after visual refinement and Phase 5 recovery, start deep links, layers and clean-air roulette. Implemented coordinate/relative-hour/ISO parsing, share-link generation, layer toggles and fresh Good-air random selection with five-pick memory. Lint, typecheck, 41 tests and production build passed. Vercel deployment remains blocked by absent project linkage/CLI; user requested proceeding to the next phase. Solar terminator, Open Graph image and remaining signature work are still pending. This is a checkpoint, not Phase 6 completion.
+
+### Welcome overflow correction — 2026-11-08
+
+User screenshot showed an oversized Earth overlapping the feature strip. Replaced the absolute-positioned welcome hero with explicit copy/Earth/meta/features grid areas, capped Earth container width, reduced heading sizes, and added a compact-height desktop treatment. Mobile keeps the globe in its own normal-flow row. Initialized globe canvas dimensions from its host before rendering and moved the decorative camera farther away. Lint, typecheck, 41 tests, production webpack build and diff whitespace checks passed. Visual confirmation in the user's browser remains pending.
