@@ -222,3 +222,23 @@ Checks passed: lint, typecheck, 59 tests and production build. Tests mock the li
 ### LiquidGlass visibility correction
 
 The user's browser showed white shader surfaces washing out native button content. The renderer now receives only empty decorative DIV surfaces in a separate aria-hidden capture scene. Real buttons and their SVG/text content remain outside that scene, at a higher stacking level. The native surfaces have explicit contrasting foreground/background colors (light entry CTA with dark text; dark controls with light text), including readable disabled states. A ResizeObserver aligns decorative surfaces without mutating control styles. This supersedes the earlier direct-button capture integration. Regression coverage verifies that no native control is passed to the library and that semantic buttons are outside its root. Lint/typecheck/59 tests/build pass; visual confirmation in the user's browser is pending.
+
+## Phase 8 core checkpoint — wind, PWA and offline readings
+
+- /api/wind proxies Open-Meteo Weather current wind_speed_10m / wind_direction_10m over 40 coarse coordinates, cached 20 minutes. The optional globe particle layer is capped at 100–200 particles, uses modeled values only and interprets wind bearing as FROM. Motion is exaggerated for readability; it is not a pollution-transport model. Missing cells have no particles. The layer is Now-only, disabled offline/low-power/reduced-motion, and carries source/update/retrieval labels. Weather API docs were checked 8 November 2026.
+- The app now has a manifest, generated 192/512 PNG icons, theme color, and an install button when the browser emits beforeinstallprompt. Safari installation may require its Share/Add to Home Screen menu. A production-only service worker uses Google's maintained Workbox 7.3.0 CDN loader, following official workbox-sw / routing documentation. It caches visited navigation pages, hashed static chunks, textures and manifest, and never intercepts data APIs, radio streams or click registration. New app chunks still need an online visit before becoming available offline.
+- Successful model-AQI responses are stored by request URL in IndexedDB, bounded to 200 entries. On network failure or offline access, the original payload is returned with an explicit offlineCached flag; source, observation time and original retrieval time are preserved. The location card, rankings and insights mark these STALE / Not live. Offline mode also marks previously retained in-memory readings stale and restores the last saved pin. No successful prior reading means No data, never fabricated values.
+- Persistent offline support currently covers model AQI/current/history. Station and festival panels show retained in-memory results as stale, or explicit offline/no-saved-data states; their responses are not yet persisted in IndexedDB. Radio is unavailable offline. Guided breathing and Good-air roulette require fresh data, so cached/offline values cannot unlock them.
+
+### Test offline/install behaviour
+
+Use a separate production-preview port while the development server runs:
+
+```sh
+npm run build
+npm start -- --port 3001
+```
+
+Open http://localhost:3001 online, enter BREATHE, pin a city and visit desired panels. Wait for service-worker activation, reload once online, then test offline from browser DevTools. The first Workbox load needs network access to Google's CDN. Developer mode intentionally avoids registering the worker to prevent stale HMR assets. Clearing site data removes saved readings and caches.
+
+Checks passed: lint, typecheck, 66 tests and production webpack build. Wind rendering, IndexedDB integration in a real browser, service-worker lifecycle, installation, true offline reloads and Lighthouse scores remain unverified. Deployment is still pending. Phase 8 bonus items (alerts, AI assistant, export/voice/ML) are not claimed complete.

@@ -99,3 +99,11 @@ Read the supplied ybouane/liquidglass repository and its 1.0.3 package/API docum
 ### LiquidGlass label visibility fix — 2026-11-08
 
 User screenshots showed white-on-white CTA and control labels after shader initialization. Isolated the external renderer to empty aria-hidden decorative surfaces, kept all native buttons outside its capture root, and added explicit contrast styles for normal and disabled controls. Surface geometry follows the buttons via ResizeObserver; original click, focus and ARIA behavior remains native. Updated regression test asserts the library never receives native buttons. Lint, typecheck, 59 tests, production build and git diff --check passed. Browser confirmation remains pending.
+
+## Phase 8 core checkpoint — 2026-11-08
+
+Plan: official weather/Workbox documentation; coarse real-data wind particles with motion/performance guards; installable manifest/icons; explicit last-known offline model data; tests and commit.
+
+Added 40-cell modeled wind proxy and capped particle layer, optional Now-only wind control, independent source timestamps and no missing-value substitution. Added Workbox-based production service worker for shell/assets, manifest/icons and browser install prompt. Model data uses bounded IndexedDB per-request storage and preserves original fetch/observation times; failures return explicit stale data. Offline transitions mark retained data stale, stop radio and prevent cached Good-air values from unlocking breathing/roulette. Station/festival data is not persisted yet and unavailable states stay explicit.
+
+Final checks passed: lint, typecheck, 66 tests, production build and git diff --check. Tests cover meteorological FROM direction, null wind, dateline wrap, offline failure, zero AQI, original timestamps and storage failure. Actual particle rendering, install/service-worker/IndexedDB browser integration and offline reloads remain unverified; Vercel deployment remains pending. Bonus items are not complete.

@@ -1,0 +1,11 @@
+import type { Air } from './air';
+type Stored={url:string;data:Air[];savedAt:number};
+function database():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const request=indexedDB.open('breathe-last-known',1);request.onupgradeneeded=()=>request.result.createObjectStore('air',{keyPath:'url'});request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})}
+export async function readAir(url:string):Promise<Air[]|null>{if(typeof indexedDB==='undefined')return null;const db=await database();try{return await new Promise((resolve,reject)=>{const req=db.transaction('air').objectStore('air').get(url);req.onsuccess=()=>resolve((req.result as Stored|undefined)?.data??null);req.onerror=()=>reject(req.error)})}finally{db.close()}}
+export async function writeAir(url:string,data:Air[]){if(typeof indexedDB==='undefined')return;const db=await database();try{await new Promise<void>((resolve,reject)=>{const tx=db.transaction('air','readwrite'),store=tx.objectStore('air');store.put({url,data,savedAt:Date.now()});const all=store.getAll();all.onsuccess=()=>{const rows=(all.result as Stored[]).sort((a,b)=>b.savedAt-a.savedAt);rows.slice(200).forEach(r=>store.delete(r.url))};tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}finally{db.close()}}
+/** Failed/offline requests may use original payloads, always marked explicitly stale. */
+export async function fetchAirWithOffline(url:string,dependencies:{fetcher?:typeof fetch;read?:typeof readAir;write?:typeof writeAir}={}){
+ const fetcher=dependencies.fetcher??fetch,read=dependencies.read??readAir,write=dependencies.write??writeAir;
+ try{if(typeof navigator!=='undefined'&&!navigator.onLine)throw new Error('Offline');const response=await fetcher(url,{signal:AbortSignal.timeout(20000)});if(!response.ok)throw new Error('Air quality unavailable');const data:Air[]=await response.json();if(!Array.isArray(data))throw new Error('Invalid response');try{await write(url,data)}catch{/* Storage failure must not hide live data. */}return data}
+ catch{let cached:Air[]|null=null;try{cached=await read(url)}catch{/* Storage unavailable. */}if(cached)return cached.map(d=>({...d,offlineCached:true}));throw new Error('No air data available. Connect to the internet and try again.')}
+}

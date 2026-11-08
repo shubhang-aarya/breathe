@@ -1,0 +1,2 @@
+import type { MetadataRoute } from 'next';
+export default function manifest():MetadataRoute.Manifest{return {name:'BREATHE · Air quality intelligence',short_name:'BREATHE',description:'Explore the air we share, with clear sources and last-known offline readings.',start_url:'/',display:'standalone',background_color:'#080e14',theme_color:'#080e14',icons:[{src:'/api/icon?size=192',sizes:'192x192',type:'image/png',purpose:'any'},{src:'/api/icon?size=512',sizes:'512x512',type:'image/png',purpose:'maskable'}]}}

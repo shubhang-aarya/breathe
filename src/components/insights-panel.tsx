@@ -5,15 +5,17 @@ import { useQueries } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { category,pollutants,type Air,type Place } from '@/lib/air';
 import { daily,mean,percentChange,range,spikes } from '@/lib/analytics';
+import { useOffline } from '@/lib/use-offline';
+import { fetchAirWithOffline } from '@/lib/offline-air';
 import { guidance } from '@/lib/perspective';
 import { Glass,DataBadge } from './glass';
 const Chart=dynamic(()=>import('./analytics-charts'),{ssr:false,loading:()=> <p role="status">Preparing chart…</p>});
 function value(n:number|null|undefined){return n==null?'No data':n.toFixed(1)}
-function Provenance({air}:{air:Air}){return <p className="insight-source">{air.place.name} · Open-Meteo / CAMS · MODELED<br/>Observation {air.observedAt?new Date(air.observedAt).toLocaleString():'unavailable'} · Retrieved {new Date(air.fetchedAt).toLocaleString()}</p>}
+function Provenance({air}:{air:Air}){const offline=useOffline();return <p className="insight-source">{(offline||air.offlineCached)&&<DataBadge kind="STALE"/>}{air.place.name} · Open-Meteo / CAMS · MODELED<br/>Observation {air.observedAt?new Date(air.observedAt).toLocaleString():'unavailable'} · Retrieved {new Date(air.fetchedAt).toLocaleString()}</p>}
 export function InsightsPanel({pins,active,onClose}:{pins:Place[];active:Place|null;onClose:()=>void}){
  const root=useRef<HTMLElement>(null);const handler=useRef(onClose);useEffect(()=>{handler.current=onClose},[onClose]);useEffect(()=>{const previous=document.activeElement as HTMLElement;const overflow=document.body.style.overflow;document.body.style.overflow='hidden';root.current?.querySelector<HTMLButtonElement>('button')?.focus();const key=(e:KeyboardEvent)=>{if(e.key==='Escape')handler.current();if(e.key==='Tab'){const nodes=root.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input,a,summary');if(!nodes?.length)return;const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}};document.addEventListener('keydown',key);return()=>{document.body.style.overflow=overflow;document.removeEventListener('keydown',key);previous?.focus()}},[]);
  const [tab,setTab]=useState('History');const places=pins.length?pins:active?[active]:[];
- const queries=useQueries({queries:places.map(place=>({queryKey:['analytics',place.lat,place.lon],queryFn:async():Promise<Air>=>{const response=await fetch(`/api/air?lat=${place.lat}&lon=${place.lon}&history=true`);if(!response.ok)throw new Error('Data is temporarily unavailable');const rows:Air[]=await response.json();if(!rows[0])throw new Error('No data');return {...rows[0],place}},staleTime:15*60000,retry:1}))});
+ const queries=useQueries({queries:places.map(place=>({queryKey:['analytics',place.lat,place.lon],queryFn:async():Promise<Air>=>{const rows=await fetchAirWithOffline(`/api/air?lat=${place.lat}&lon=${place.lon}&history=true`);if(!rows[0])throw new Error('No data');return {...rows[0],place}},staleTime:15*60000,retry:1,networkMode:'always' as const}))});
  const data=queries.flatMap(q=>q.data?[q.data]:[]);const selected=data.find(d=>d.place.lat===active?.lat&&d.place.lon===active?.lon)??data[0];
  const history=selected?.hours.filter(h=>Date.parse(h.time)<=Date.parse(selected.observedAt??''))??[];const future=selected?.hours.filter(h=>Date.parse(h.time)>Date.parse(selected.observedAt??''))??[];
  const dates=daily(history).map(d=>d.date);const [from,setFrom]=useState('');const [to,setTo]=useState('');const a=from||dates[0]||'';const b=to||dates.at(-1)||'';const left=range(history,a,a);const right=range(history,b,b);const change=percentChange(mean(left.map(h=>h.aqi)),mean(right.map(h=>h.aqi)));const historicalDays=daily(history);const forecast=spikes(future);const forecastDays=daily(future);

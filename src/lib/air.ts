@@ -138,7 +138,7 @@ export const cities:Place[] = [
 ];
 export const pollutants = ['pm2_5','pm10','nitrogen_dioxide','sulphur_dioxide','carbon_monoxide','ozone'] as const;
 export type Pollutant = typeof pollutants[number];
-export type Air = {place:Place;aqi:number|null;pollutants:Record<Pollutant,number|null>;observedAt:string|null;fetchedAt:string;source:'Open-Meteo · CAMS';kind:'MODELED';hours:{time:string;aqi:number|null;pm25:number|null;pm10?:number|null}[]};
+export type Air = {offlineCached?:boolean;place:Place;aqi:number|null;pollutants:Record<Pollutant,number|null>;observedAt:string|null;fetchedAt:string;source:'Open-Meteo · CAMS';kind:'MODELED';hours:{time:string;aqi:number|null;pm25:number|null;pm10?:number|null}[]};
 export function coordinateKey(p:Place){return `${p.lat.toFixed(3)},${p.lon.toFixed(3)}`}
 export function validCoordinates(lat:number,lon:number){return Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=-90&&lat<=90&&lon>=-180&&lon<=180}
 export function category(aqi:number|null){if(aqi===null||!Number.isFinite(aqi))return 'No data';if(aqi<=50)return 'Good';if(aqi<=100)return 'Moderate';if(aqi<=150)return 'Unhealthy for sensitive groups';if(aqi<=200)return 'Unhealthy';if(aqi<=300)return 'Very unhealthy';return 'Hazardous'}

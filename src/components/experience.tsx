@@ -8,6 +8,7 @@ import { Glass, DataBadge } from "./glass";
 import { Explorer } from "./explorer";
 import { SoundSettings } from './sound-settings';
 import { unlockSounds } from '@/lib/ui-sound';
+import { PwaStatus } from './pwa-status';
 import { Planet } from "./planet";
 import { useExperience } from "@/store/experience";
 
@@ -32,7 +33,7 @@ export function Experience(){
  return <div className={`experience ${lowPower?"low-power":""}`}>
   <a href="#main" className="skip-link">Skip to content</a>
   <header className="topbar"><Link className="brand" href="/" aria-label="Breathe home"><Wind size={29} strokeWidth={1.5}/><span>BREATHE</span></Link><span className="edition">AIR QUALITY. HUMAN PERSPECTIVE.</span><LiquidButtons className="header-actions"><SoundSettings/><button className="quiet-button power-button" onClick={toggleLowPower} aria-pressed={lowPower}><Zap size={15}/><span>{lowPower?"Low power on":"Low power"}</span></button><button ref={creditsButton} className="icon-button" aria-label="Data and credits" onClick={()=>setCreditsOpen(true)}><Info size={19}/></button></LiquidButtons></header>
-  <main id="main"><AnimatePresence mode="wait">{!entered?<motion.div key="welcome" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0,scale:1.015,filter:"blur(5px)"}} transition={{duration:.5,ease:[.22,1,.36,1]}} className="welcome">
+  <PwaStatus/><main id="main"><AnimatePresence mode="wait">{!entered?<motion.div key="welcome" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0,scale:1.015,filter:"blur(5px)"}} transition={{duration:.5,ease:[.22,1,.36,1]}} className="welcome">
    <div className="hero-copy"><div className="eyebrow"><span className="tiny-dot"/> A LITTLE PERSPECTIVE CHANGES EVERYTHING</div><h1>The world turns.<br/>Let’s breathe<br/><span>better.</span></h1><p className="intro">Explore the air we share. Find a cleaner corner of the world. Tune into life somewhere new.</p><LiquidButtons className="entry-actions"><button className="enter-button" onClick={begin}>Enter BREATHE <ArrowRight size={20}/></button></LiquidButtons><div className="audio-note"><AudioLines size={15}/> A world of air. A little local radio. Sound is optional.</div></div>
    <Planet/>
    <div className="welcome-bottom"><span>BUILT FOR A CLEARER TOMORROW</span><div className="scroll-note"><ArrowDown size={14}/> YOUR JOURNEY STARTS WITH A BREATH</div><span>DIWALI CHALLENGE ’26</span></div>
