@@ -95,3 +95,7 @@ Final verification passed: lint, typecheck, 56 tests across 18 files, production
 ### Requested LiquidGlass wrapper — 2026-11-08
 
 Read the supplied ybouane/liquidglass repository and its 1.0.3 package/API documentation. Added a lazy, pinned documented CDN loader because npm DNS remains blocked. Integrated a shared renderer per main button group with direct-child structure, button mode, restrained refraction and native semantic controls. Low power, reduced motion and initialization failure retain the frosted fallback. Added group teardown and functionality tests. Lint, typecheck, 59 tests, production build and git diff --check passed. Live shader appearance and CDN verification are pending; no browser-rendering success is claimed.
+
+### LiquidGlass label visibility fix — 2026-11-08
+
+User screenshots showed white-on-white CTA and control labels after shader initialization. Isolated the external renderer to empty aria-hidden decorative surfaces, kept all native buttons outside its capture root, and added explicit contrast styles for normal and disabled controls. Surface geometry follows the buttons via ResizeObserver; original click, focus and ARIA behavior remains native. Updated regression test asserts the library never receives native buttons. Lint, typecheck, 59 tests, production build and git diff --check passed. Browser confirmation remains pending.
