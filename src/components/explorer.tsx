@@ -29,7 +29,7 @@ const AirTrend=dynamic(()=>import('./air-trend'),{loading:()=> <p>Preparing tren
 const requestAir=fetchAirWithOffline;
 const labels:Record<string,string>={pm2_5:'PM₂.₅',pm10:'PM₁₀',nitrogen_dioxide:'NO₂',sulphur_dioxide:'SO₂',carbon_monoxide:'CO',ozone:'O₃'};
 function stale(air:Air|undefined,error:boolean){return error||air?.offlineCached===true||!!(air?.observedAt&&Date.now()-Date.parse(air.observedAt)>2*3600000)}
-function Updated({air}:{air:Air}){return <small className="reading-source">{air.source} · Updated {air.observedAt?new Date(air.observedAt).toLocaleString():'unavailable'}<br/>Retrieved {new Date(air.fetchedAt).toLocaleString()}</small>}
+function Updated({air}:{air:Air}){return <small className="reading-source">{air.source} · Valid time {air.observedAt?new Date(air.observedAt).toLocaleString():'unavailable'}<br/>Retrieved {new Date(air.fetchedAt).toLocaleString()}</small>}
 export function Explorer(){
  const offline=useOffline();
  const title=useRef<HTMLHeadingElement>(null);useEffect(()=>{title.current?.focus()},[]);
