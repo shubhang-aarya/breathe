@@ -9,8 +9,9 @@ type VoiceWindow = Window & { SpeechRecognition?: new () => Recognition; webkitS
 export function VoiceControl({ onPin, offline }: { onPin: (place: Place) => void; offline: boolean }) {
   const [status, setStatus] = useState('Press Listen and say “What is the air like in Delhi?”');
   const [listening, setListening] = useState(false), [matches, setMatches] = useState<SearchPlace[]>([]);
+  const generation=useRef(0);
   const recognition = useRef<Recognition | null>(null), timer = useRef<ReturnType<typeof setTimeout> | null>(null), controller = useRef<AbortController | null>(null);
-  useEffect(() => () => { recognition.current?.abort(); if (timer.current) clearTimeout(timer.current); controller.current?.abort(); window.speechSynthesis?.cancel(); }, []);
+  useEffect(() => () => { generation.current++;recognition.current?.abort(); if (timer.current) clearTimeout(timer.current); controller.current?.abort(); window.speechSynthesis?.cancel(); }, []);
   async function search(transcript: string) {
     const term = transcript.replace(/^.*?(?:air (?:quality )?(?:like )?(?:in|at)|(?:go|fly|take me) to|search(?: for)?)\s+/i, '').replace(/[?.!]+$/, '').trim();
     if (!term || term.length > 80) { setStatus('Try a short city name.'); return; }
@@ -31,12 +32,14 @@ export function VoiceControl({ onPin, offline }: { onPin: (place: Place) => void
     try { engine.start(); setListening(true); setStatus('Listening…'); timer.current = setTimeout(() => engine.stop(), 12000); } catch { setStatus('Unable to start recognition. Try again.'); }
   }
   async function choose(place: SearchPlace) {
+    const token=++generation.current;
     onPin(place); setMatches([]); setStatus('Loading a sourced spoken summary…');
     try {
       const [air] = await fetchAirWithOffline(`/api/air?lat=${place.lat}&lon=${place.lon}`);
+      if(token!==generation.current)return;
       const text = !air ? 'No air data is available.' : `${place.name}. ${!isFreshAir(air) ? 'Stale, not live. ' : ''}Modeled US air quality index ${air.aqi ?? 'unavailable'}. ${category(air.aqi)}. Source Open Meteo, CAMS. Valid time ${air.observedAt ?? 'unavailable'}. Retrieved ${air.fetchedAt}.`;
       setStatus(text); window.speechSynthesis?.cancel(); if ('SpeechSynthesisUtterance' in window) window.speechSynthesis?.speak(new SpeechSynthesisUtterance(text));
     } catch { setStatus('No data available for a spoken summary.'); }
   }
-  return <div><p>Voice uses your browser’s speech service, which may send audio to its provider. BREATHE does not store recordings. Recognition support varies by browser.</p><button className="quiet-button" disabled={offline || listening} onClick={listen}>Listen</button><button className="quiet-button" onClick={() => { recognition.current?.stop(); window.speechSynthesis?.cancel(); setListening(false); }}>Stop speech</button><p role="status">{offline ? 'Voice search is unavailable offline.' : status}</p>{matches.map(place => <button className="quiet-button" key={place.id} onClick={() => void choose(place)}>{place.name}</button>)}</div>;
+  return <div><p>Voice uses your browser’s speech service, which may send audio to its provider. BREATHE does not store recordings. Recognition support varies by browser.</p><button className="quiet-button" disabled={offline || listening} onClick={listen}>Listen</button><button className="quiet-button" onClick={() => { generation.current++;recognition.current?.stop(); window.speechSynthesis?.cancel(); setListening(false); }}>Stop speech</button><p role="status">{offline ? 'Voice search is unavailable offline.' : status}</p>{matches.map(place => <button className="quiet-button" key={place.id} onClick={() => void choose(place)}>{place.name}</button>)}</div>;
 }

@@ -4,3 +4,9 @@ it('rejects invalid and missing coordinates',()=>{for(const query of ['lat=91&lo
 it('accepts real zero and bounded hour offsets',()=>{const d=parseDeepLink(new URLSearchParams('lat=0&lon=0&t=%2B12h'));expect(d.place?.lat).toBe(0);expect(d.offset).toBe(12);expect(parseDeepLink(new URLSearchParams('t=-99h')).offset).toBe(0)});
 it('handles ISO timestamps and discards unknown layers',()=>{expect(parseDeepLink(new URLSearchParams('t=2026-11-08T13:00:00Z'),Date.parse('2026-11-08T12:00:00Z')).offset).toBe(1);expect(parseDeepLink(new URLSearchParams('layers=script')).layers).toEqual(defaultLayers)});
 it('round trips sanitized place, time and layers',()=>{const layers={aqi:false,hotspots:true,pins:true,dayNight:false,wind:false};const url=buildDeepLink('https://example.com/?secret=omit#x',28.61,77.21,-12,layers);const parsed=parseDeepLink(new URL(url).searchParams);expect(parsed.place?.lat).toBe(28.61);expect(parsed.offset).toBe(-12);expect(parsed.layers).toEqual(layers);expect(url).not.toContain('secret')});
+it('round trips an empty layer set and rejects normalized invalid calendar dates',()=>{
+ const layers={aqi:false,hotspots:false,pins:false,dayNight:false,wind:false};
+ expect(parseDeepLink(new URL(buildDeepLink('https://example.com',0,0,0,layers)).searchParams).layers).toEqual(layers);
+ expect(parseDeepLink(new URLSearchParams('t=2026-02-30T13:00:00Z'),Date.parse('2026-03-02T12:00:00Z')).offset).toBe(0);
+ expect(parseDeepLink(new URLSearchParams('t=2026-11-08T13:00Z'),Date.parse('2026-11-08T12:00:00Z')).offset).toBe(1);
+});

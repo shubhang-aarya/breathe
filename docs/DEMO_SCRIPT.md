@@ -10,8 +10,8 @@ Before recording: use a production deployment with working network access. Check
 | 0:50–1:10 | Open history, compare two available dates and show PM2.5/PM10. Explain missing values and spike markers. Move to forecast and point out its distinct FORECAST treatment. |
 | 1:10–1:30 | Pin a second city and open comparison. Show ranking and overlaid trends. “This compares available modeled data; cleaner is relative to these locations.” Briefly show health guidance. |
 | 1:30–1:55 | Open Diwali Effect, choose Delhi and an available year. Show the festival marker, before/after window and coverage. “The current year's window fills over time. A change around the festival does not prove a particular cause.” |
-| 1:55–2:15 | Return to Now. Toggle day/night and, if available, wind. Use Surprise me for a fresh Good-air location. Open guided breathing briefly and show the disabled explanation if no qualifying reading is available. |
-| 2:15–2:35 | Copy a deep link and reopen it. Show that place and time restore. Point out the STALE / Not live state using a previously verified offline flow, if prepared. |
+| 1:55–2:15 | Open Assistant · Alerts · Share. Ask how the air is trending; explain whether AI or the no-key data summary answered. Enable an in-app threshold and show its open-app scope. Briefly show the PNG/report actions. |
+| 2:15–2:35 | Show the ML estimate label and holdout error if coverage is available. Copy and reopen a deep link. Show STALE / Not live using a previously verified offline flow, if prepared. |
 | 2:35–2:45 | Open Data & credits. “Every value has context: its type, source and time. Missing data stays missing.” |
 
-Do not demonstrate or claim AI chat, threshold alerts, voice, ML predictions or PNG export: those bonus features are not implemented. Never claim a measured Lighthouse score or successful offline/playback behavior without verifying it on the recording device.
+Optional longer walkthrough: use a fresh Good-air roulette result for guided breathing; demonstrate opt-in UI sounds, wind and voice lookup. Only enable browser permission prompts on the recording device after explaining them. Without an AI key, say “data summary,” not “AI response.” Never claim a measured Lighthouse score or successful offline/playback behavior without verifying it on that device.

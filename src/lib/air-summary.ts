@@ -27,8 +27,9 @@ export function summarizeAir(air: Air) {
 /** Generated prose carries no quantities: the UI renders trusted numeric data separately. */
 export function extractAssistantText(raw: unknown): string | null {
   if (!raw || typeof raw !== 'object' || !('output' in raw) || !Array.isArray(raw.output)) return null;
-  const text = raw.output.flatMap((item: { type?: string; content?: { type?: string; text?: string }[] }) =>
-    item?.type === 'message' && Array.isArray(item.content) ? item.content.filter(c => c.type === 'output_text' && typeof c.text === 'string').map(c => c.text!) : []
-  ).join('\n').trim();
-  return text && text.length <= 4000 && !/\d/.test(text) ? text : null;
+  const text = raw.output.flatMap((item: unknown) => {
+    if (!item || typeof item !== 'object' || !('type' in item) || item.type !== 'message' || !('content' in item) || !Array.isArray(item.content)) return [];
+    return item.content.flatMap((content: unknown) => content && typeof content === 'object' && 'type' in content && content.type === 'output_text' && 'text' in content && typeof content.text === 'string' ? [content.text] : []);
+  }).join('\n').trim();
+  return text && text.length <= 4000 && !/\d|\b(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|percent)\b/i.test(text) ? text : null;
 }

@@ -22,5 +22,7 @@ it('summaries preserve unavailable history', () => {
 it('rejects AI quantities and tolerates malformed responses', () => {
   expect(extractAssistantText({ output: [{ type: 'message', content: [{ type: 'output_text', text: 'AQI is 999.' }] }] })).toBeNull();
   expect(extractAssistantText({ output: [] })).toBeNull();
+  expect(extractAssistantText({output:[{type:'message',content:[{type:'output_text',text:'The index is nine hundred.'}]}]})).toBeNull();
+  expect(extractAssistantText({ output: [null, 7, {type:'message',content:[null]}] })).toBeNull();
   expect(extractAssistantText({ output: [{ type: 'message', content: [{ type: 'output_text', text: 'The modeled category is Good.' }] }] })).toBe('The modeled category is Good.');
 });

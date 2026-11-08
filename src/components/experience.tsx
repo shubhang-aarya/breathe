@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+import { unlockRadioAudio } from "@/lib/audio-player";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowRight, AudioLines, ChevronRight, Globe2, Info, Leaf, Radio, Wind, X, Zap } from "lucide-react";
 import { LiquidButtons } from "./liquid-buttons";
 import { Glass, DataBadge } from "./glass";
-import { Explorer } from "./explorer";
+const Explorer=dynamic(()=>import("./explorer").then(m=>m.Explorer),{loading:()=> <div className="globe-loading" role="status">Opening your window to the world…</div>});
 import { SoundSettings } from './sound-settings';
 import { unlockSounds } from '@/lib/ui-sound';
 import { PwaStatus } from './pwa-status';
@@ -13,6 +15,7 @@ import { Planet } from "./planet";
 import { useExperience } from "@/store/experience";
 
 const credits = [
+  ["Typeface", "Geist · Vercel / Geist Project Authors · SIL OFL 1.1", "https://github.com/vercel/geist-font/blob/main/LICENSE.txt"],
   ["Reverse geocoding", "BigDataCloud keyed server endpoint · arbitrary pins", "https://www.bigdatacloud.com/docs/reverse-geocoding/reverse-geocode-to-city-api"],
   ["Health guidance", "AirNow · US AQI categories and precautions", "https://www.airnow.gov/aqi/aqi-basics/"],
   ["Cigarette approximation", "Berkeley Earth · PM2.5 comparison method", "https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/"],
@@ -35,7 +38,7 @@ export function Experience(){
  const audio=useRef<AudioContext|null>(null);
 
  useEffect(()=>{if(!creditsOpen)return; const previous=document.activeElement as HTMLElement;close.current?.focus();const handler=(e:KeyboardEvent)=>{if(e.key==="Escape")setCreditsOpen(false);if(e.key==="Tab"){const nodes=document.querySelectorAll<HTMLElement>("[data-dialog] button, [data-dialog] a");const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}};document.addEventListener("keydown",handler);return()=>{document.removeEventListener("keydown",handler);previous?.focus()}},[creditsOpen]);
- function begin(){unlockSounds();try{audio.current ??= new AudioContext();void audio.current.resume().catch(()=>{});}catch{/* Browsers without audio can still explore. */}enter();}
+ function begin(){unlockRadioAudio();unlockSounds();try{audio.current ??= new AudioContext();void audio.current.resume().catch(()=>{});}catch{/* Browsers without audio can still explore. */}enter();}
  return <div className={`experience ${lowPower?"low-power":""}`}>
   <a href="#main" className="skip-link">Skip to content</a>
   <header className="topbar"><Link className="brand" href="/" aria-label="Breathe home"><Wind size={29} strokeWidth={1.5}/><span>BREATHE</span></Link><span className="edition">AIR QUALITY. HUMAN PERSPECTIVE.</span><LiquidButtons className="header-actions"><SoundSettings/><button className="quiet-button power-button" onClick={toggleLowPower} aria-pressed={lowPower}><Zap size={15}/><span>{lowPower?"Low power on":"Low power"}</span></button><button ref={creditsButton} className="icon-button" aria-label="Data and credits" onClick={()=>setCreditsOpen(true)}><Info size={19}/></button></LiquidButtons></header>
