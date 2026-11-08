@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { Experience } from './experience';
 import { useExperience } from '../store/experience';
+vi.mock('./planet',()=>({Planet:()=> <div aria-hidden="true"/>}));
 vi.mock('./explorer',()=>({Explorer:()=> <h1>Explorer ready</h1>}));
 vi.mock('framer-motion',async()=>{const React=await import('react');return {AnimatePresence:({children}:{children:React.ReactNode})=>children,motion:new Proxy({},{get:(_,tag:string)=>React.forwardRef(function Mock({children,initial,animate,exit,transition,...props}:Record<string,unknown>,ref){void initial;void animate;void exit;void transition;return React.createElement(tag,{...props,ref},children as React.ReactNode)})})}});
 afterEach(()=>{cleanup();useExperience.setState({entered:false,lowPower:false})});
