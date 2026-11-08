@@ -1,0 +1,1 @@
+export function Planet(){return <div className="planet-scene" aria-hidden="true"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="planet"><div className="meridians"/><div className="planet-shadow"/></div><div className="planet-caption"><span className="tiny-dot"/> ONE PLANET. EVERY BREATH.</div></div>}
