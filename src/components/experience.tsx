@@ -13,6 +13,12 @@ import { Planet } from "./planet";
 import { useExperience } from "@/store/experience";
 
 const credits = [
+  ["Reverse geocoding", "BigDataCloud keyed server endpoint · arbitrary pins", "https://www.bigdatacloud.com/docs/reverse-geocoding/reverse-geocode-to-city-api"],
+  ["Health guidance", "AirNow · US AQI categories and precautions", "https://www.airnow.gov/aqi/aqi-basics/"],
+  ["Cigarette approximation", "Berkeley Earth · PM2.5 comparison method", "https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/"],
+  ["PNG export", "html-to-image · MIT · optional CDN renderer", "https://github.com/bubkoo/html-to-image"],
+  ["Offline shell", "Google Workbox · MIT", "https://developer.chrome.com/docs/workbox/"],
+  ["AI explanations", "OpenAI Responses API · optional server key", "https://developers.openai.com/api/docs/guides/text"],
   ["LiquidGlass buttons", "ybouane/liquidglass · MIT · v1.0.3", "https://github.com/ybouane/liquidglass"],
   ["City search", "Open-Meteo geocoding · GeoNames location data", "https://open-meteo.com/en/docs/geocoding-api"],
   ["Open-Meteo", "CAMS modeled air quality, forecasts and weather", "https://open-meteo.com/en/docs/air-quality-api"],

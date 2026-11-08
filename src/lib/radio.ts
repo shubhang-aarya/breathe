@@ -6,4 +6,4 @@ export function filterStations(raw:unknown):Station[]{if(!Array.isArray(raw))ret
  seen.add(r.stationuuid);return [{id:r.stationuuid,name:String(r.name??'Unnamed station').slice(0,160),url,country:String(r.countrycode??''),state:String(r.state??''),tags:String(r.tags??'').slice(0,200),logo:httpsUrl(r.favicon),votes:typeof r.votes==='number'?r.votes:0,clicks:typeof r.clickcount==='number'?r.clickcount:0}];
  }).sort((a,b)=>b.votes-a.votes||b.clicks-a.clicks)}
 export function uuid(value:string){return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)}
-export type RadioResult={stations:Station[];scope:'nearby'|'regional';fetchedAt:string;source:'Radio Browser'};
+export type RadioResult={stations:Station[];scope:'nearby'|'state'|'country'|'regional';fetchedAt:string;source:'Radio Browser'};

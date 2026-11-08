@@ -1,0 +1,6 @@
+import { expect, it, vi } from 'vitest';
+import { findRadio } from './radio-discovery';
+const station = { stationuuid: '01234567-89ab-cdef-0123-456789abcdef', url_resolved: 'https://example.com/live', lastcheckok: 1, codec: 'MP3', name: 'Station' };
+it('prefers a working nearby station before region or country', async () => { const request = vi.fn().mockResolvedValue([station]); expect((await findRadio(0, 0, 'IN', 'Punjab', request)).scope).toBe('nearby'); expect(request).toHaveBeenCalledTimes(1); });
+it('falls back to region then country before distant geographic alternatives', async () => { const request = vi.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([]).mockResolvedValueOnce([station]); expect((await findRadio(0, 0, 'IN', 'Punjab', request)).scope).toBe('country'); expect(request.mock.calls[1][0]).toContain('state=Punjab'); expect(request.mock.calls[2][0]).toContain('countrycode=IN'); });
+it('uses regional geographic alternatives without invented country metadata', async () => { const request = vi.fn().mockResolvedValue([]); const result = await findRadio(0, 0, undefined, undefined, request); expect(result.scope).toBe('regional'); expect(request).toHaveBeenCalledTimes(2); expect(request.mock.calls[1][0]).toContain('geo_distance=1500000'); });

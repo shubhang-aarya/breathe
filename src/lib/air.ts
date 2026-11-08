@@ -1,4 +1,4 @@
-export type Place = { name:string; lat:number; lon:number };
+export type Place = { name:string; lat:number; lon:number; countryCode?:string; region?:string };
 export const cities:Place[] = [
  {name:'Delhi, India',lat:28.61,lon:77.21},{name:'Mumbai, India',lat:19.08,lon:72.88},{name:'Kolkata, India',lat:22.57,lon:88.36},{name:'Bengaluru, India',lat:12.97,lon:77.59},{name:'Gangtok, India',lat:27.33,lon:88.61},{name:'London, United Kingdom',lat:51.51,lon:-.13},{name:'Paris, France',lat:48.86,lon:2.35},{name:'New York, United States',lat:40.71,lon:-74.01},{name:'Tokyo, Japan',lat:35.68,lon:139.69},{name:'Sydney, Australia',lat:-33.87,lon:151.21},{name:'Cape Town, South Africa',lat:-33.92,lon:18.42},{name:'São Paulo, Brazil',lat:-23.55,lon:-46.63},{name:'Singapore',lat:1.35,lon:103.82},{name:'Beijing, China',lat:39.9,lon:116.4},{name:'Helsinki, Finland',lat:60.17,lon:24.94},{name:'Reykjavík, Iceland',lat:64.15,lon:-21.94},
  {"name": "Chennai, India", "lat": 13.08, "lon": 80.27},
