@@ -18,6 +18,7 @@ Add your OpenAQ key to `.env.local`. Obtain it through the [OpenAQ platform](htt
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
+| `WAQI_API_TOKEN` | For reported station AQI | Server-only WAQI geo feed; obtain your own token at https://aqicn.org/data-platform/token/ |
 | `OPENAQ_API_KEY` | For station measurements | Server-only OpenAQ v3 requests |
 | `OPENAI_API_KEY` | Optional | Server-only grounded conversational explanations; sourced summary fallback without it |
 | `OPENAI_MODEL` | Optional | Responses API model; defaults to `gpt-4.1-mini` |
@@ -141,3 +142,10 @@ Production is live at **https://breathe-seven-alpha.vercel.app** under `shubhang
 ## Demo and screenshots
 
 Use [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the 2–3 minute demonstration. Screenshot capture is pending a browser-capable session; [docs/screenshots/README.md](docs/screenshots/README.md) lists the required captures. No fabricated screenshot or unmeasured performance score is presented.
+
+
+## Reported live station AQI (WAQI)
+
+Set WAQI_API_TOKEN in Vercel Production and Preview and redeploy. The current location card prefers a recent WAQI-reported US AQI from a station within 50 km, displaying its name, distance, observation time and originating provider attribution. Values more than two hours old or in the future are excluded from live display; invalid/missing AQI is never replaced with a model estimate. WAQI pollutant fields are AQI subindices, not µg/m³ concentrations. OpenAQ particle NowCast remains the fallback where available. The modeled globe/history/forecast remain separate. A token does not guarantee coverage in every location.
+
+[WAQI API terms](https://aqicn.org/api/) require your own token, attribution to WAQI and the originating provider, restrict paid usage and cached/archived redistribution, and require prior notification for public nonprofit usage. Review applicability before activation. Unlike other data endpoints, /api/live-aqi uses no-store at the provider, route and CDN, bypasses IndexedDB and service-worker data caching, and is unavailable offline. This provider-specific handling follows its usage restrictions. No WAQI API token is included in source or examples.
