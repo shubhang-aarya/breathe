@@ -163,3 +163,7 @@ IQAir `/v2/nearest_city` supplies `current.pollution.aqius` with an observation 
 IQAir responses are server-cached for 15 minutes with revalidation; observation freshness is checked separately. Quotas: 4 calls/minute and 10/hour per budget store, below the Community plan's 5/minute, 500/day, 10,000/month. Redis makes reservations shared; without Redis limits are per server process, so upstream quotas may still be hit by distributed traffic. Provider 429 cooldowns are respected. WAQI remains uncached under its usage terms. Keys are server-only. No key is embedded in examples or responses.
 
 Validation uses contract fixtures for zero AQI, missing values, coordinate order, stale/future timestamps, nearest-source selection, provider outages, and separating distant reports from local AQI. Actual IQAir coverage requires a configured personal key and a live-provider check.
+
+### Default data source restored
+
+The default location card uses the original Open-Meteo / CAMS API again: current modeled US AQI, six pollutant concentrations where available, history and forecast. MODELED / FORECAST badges, source, valid time and retrieval time remain visible. These estimates are not called live station measurements. OpenAQ observations are available in the separate “Measured station data” section. The default UI no longer calls the optional WAQI / IQAir reported-AQI endpoint, and does not require either key. Existing optional adapters remain available for future use.
