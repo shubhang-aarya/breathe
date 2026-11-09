@@ -26,6 +26,7 @@ const credits = [
   ["City search", "Open-Meteo geocoding · GeoNames location data", "https://open-meteo.com/en/docs/geocoding-api"],
   ["Open-Meteo", "CAMS modeled air quality, forecasts and weather", "https://open-meteo.com/en/docs/air-quality-api"],
   ["OpenAQ", "Station measurements · API key required", "https://docs.openaq.org/"],
+  ["IQAir / AirVisual", "Current nearest-city US AQI · Community API · key required", "https://www.iqair.com/"],
   ["World Air Quality Index", "Reported station AQI · originating provider credited with each reading", "https://aqicn.org/api/"],
   ["US EPA / AirNow", "Particle NowCast method · 2024 AQI breakpoints", "https://docs.airnowapi.org/aq101"],
   ["Earth imagery", "Blue Marble / Earth textures via three-globe example assets", "https://github.com/vasturiano/three-globe"],

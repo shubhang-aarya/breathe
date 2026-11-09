@@ -1,9 +1,10 @@
 import 'server-only';
-type Name = 'assistant' | 'openaq';
+type Name = 'assistant' | 'openaq' | 'iqair';
 type Budget = { allowed: boolean; retryAfter: number; shared: boolean };
 type Limit = { seconds: number; count: number };
 export class QuotaUnavailable extends Error { constructor() { super('Request limiting is temporarily unavailable'); } }
 const limits: Record<Name, Limit[]> = {
+  iqair: [{ seconds: 60, count: 4 }, { seconds: 3600, count: 10 }],
   assistant: [{ seconds: 60, count: 12 }, { seconds: 3600, count: 120 }],
   // Deliberately below OpenAQ's documented default quota; upstream headers still win.
   openaq: [{ seconds: 60, count: 30 }, { seconds: 3600, count: 1000 }],

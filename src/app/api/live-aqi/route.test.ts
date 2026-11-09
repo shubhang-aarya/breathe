@@ -1,6 +1,7 @@
 import {afterEach,expect,it,vi} from 'vitest';
 vi.mock('server-only',()=>({}));
-const {providerFetch}=vi.hoisted(()=>({providerFetch:vi.fn()}));
+const {providerFetch,getIQAir}=vi.hoisted(()=>({providerFetch:vi.fn(),getIQAir:vi.fn().mockResolvedValue(null)}));
+vi.mock('@/lib/server/iqair',()=>({getIQAir}));
 vi.mock('@/lib/server/retry',()=>({providerFetch,ProviderError:class extends Error{status=429;retryAfter=60;}}));
 import {GET} from './route';
 import {NextRequest} from 'next/server';
@@ -14,3 +15,6 @@ it('discovers regional station feeds when the coordinate feed has no usable repo
  providerFetch.mockImplementation(async(url:string)=>({json:async()=>url.includes('/map/bounds/')?{status:'ok',data:[{uid:123,lat:23.15,lon:80.65},{uid:'unsafe/path',lat:23.15,lon:80.65}]}:url.includes('/feed/@123/')?{status:'ok',data:{aqi:81,city:{name:'Regional source',geo:[23.15,80.65],url:'https://example.org/station'},time:{iso:new Date(Date.now()-30*60000).toISOString()},attributions:[{name:'Provider',url:'https://example.org/'}]}}:{status:'error',data:'Unknown station'}}));
  const r=await GET(new NextRequest('https://example.org/api/live-aqi?lat=23.12&lon=80.60'));const d=await r.json();expect(d.status).toBe('ok');expect(d.reading.station).toBe('Regional source');expect(d.reading.aqi).toBe(81);expect(providerFetch.mock.calls.some(([url])=>url.includes('/feed/@123/'))).toBe(true);expect(providerFetch.mock.calls.some(([url])=>url.includes('unsafe'))).toBe(false);
 });
+
+it('serves IQAir independently when WAQI is not configured',async()=>{vi.stubEnv('WAQI_API_TOKEN','');getIQAir.mockResolvedValueOnce({source:'IQAir',scope:'city',aqi:0,distanceKm:2,observedAt:new Date().toISOString()});const r=await GET(new NextRequest('https://example.org/api/live-aqi?lat=23.12&lon=80.60'));expect((await r.json()).reading.aqi).toBe(0);expect(providerFetch).not.toHaveBeenCalled()});
+it('falls back to IQAir when WAQI fails without exposing provider errors',async()=>{vi.stubEnv('WAQI_API_TOKEN','test-only-token');getIQAir.mockResolvedValueOnce({source:'IQAir',aqi:42,distanceKm:2,observedAt:new Date().toISOString()});providerFetch.mockRejectedValueOnce(new Error('secret-bearing failure'));const r=await GET(new NextRequest('https://example.org/api/live-aqi?lat=23.12&lon=80.60'));const text=await r.text();expect(text).not.toContain('secret-bearing');expect(JSON.parse(text).reading.source).toBe('IQAir')});

@@ -1,5 +1,5 @@
 import { distanceKm } from './openaq';
-export type ReportedAQI = { aqi:number; station:string; distanceKm:number; observedAt:string; fetchedAt:string; url:string; attribution:{name:string;url:string}[]; subindices:Partial<Record<'pm25'|'pm10'|'no2'|'so2'|'co'|'o3',number>> };
+export type ReportedAQI = { source?:'IQAir'; scope?:'city'; aqi:number; station:string; distanceKm:number; observedAt:string; fetchedAt:string; url:string; attribution:{name:string;url:string}[]; subindices:Partial<Record<'pm25'|'pm10'|'no2'|'so2'|'co'|'o3',number>> };
 export type ReportedResult = {status:'ok';reading:ReportedAQI}|{status:'unconfigured'|'unavailable';reason?:string};
 const safeUrl=(value:unknown)=>{try{const u=new URL(String(value));return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password?u.href:null}catch{return null}};
 export function reportedFresh(reading:ReportedAQI,now:number){const time=Date.parse(reading.observedAt);return Number.isFinite(time)&&time<=now&&now-time<=2*3600000;}
@@ -20,4 +20,9 @@ export function parseReportedAQI(raw:unknown,lat:number,lon:number,now=Date.now(
  const subindices:ReportedAQI['subindices']={};const iaqi=d.iaqi as Record<string,{v?:unknown}>|undefined;
  for(const name of ['pm25','pm10','no2','so2','co','o3'] as const){const value=iaqi?.[name]?.v;if(typeof value==='number'&&Number.isFinite(value)&&value>=0)subindices[name]=value;}
  return {aqi:d.aqi,station:city.name.slice(0,200),distanceKm:distance,observedAt:new Date(explicit).toISOString(),fetchedAt:new Date(now).toISOString(),url,attribution,subindices};
+}
+
+/** Prefer fresh, nearby observations; a city or distant station is a reference. */
+export function selectReportedAQI(readings:ReportedAQI[],now=Date.now()):ReportedAQI|null{
+ return [...readings].sort((a,b)=>Number(reportedFresh(b,now))-Number(reportedFresh(a,now))||a.distanceKm-b.distanceKm||Date.parse(b.observedAt)-Date.parse(a.observedAt))[0]??null;
 }
